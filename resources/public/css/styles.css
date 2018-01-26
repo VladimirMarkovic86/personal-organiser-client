@@ -10,13 +10,13 @@ body {
 }
 
 table.login {
-	position: absolute;
-	left: calc(50% - 157px);
-	top: calc(50% - 72px);
-	background-color: #90B4FE;
-	padding: 5px;
-	border: 5px solid white;
-	border-radius: 15px;
+  position: absolute;
+  left: calc(50% - 157px);
+  top: calc(50% - 72px);
+  background-color: #90B4FE;
+  padding: 5px;
+  border: 5px solid white;
+  border-radius: 15px;
 }
 
 div.header {
@@ -32,7 +32,7 @@ div.header {
 }
 
 div.header nav {
-	margin-left: calc(50% - 220px);
+  margin-left: calc(50% - 220px);
 }
 
 div.header nav a {
@@ -46,15 +46,15 @@ div.header nav a:hover{
 }
 
 div.content {
-	position: absolute;
-	top: 35px;
-	width: 80%;
+  position: absolute;
+  top: 35px;
+  width: 80%;
   background-color: #90B4FE;
   height: calc(100% - 110px);
   margin-left: 10%;
   overflow: auto;
   border-left: 5px solid white;
-	border-right: 5px solid white;
+  border-right: 5px solid white;
 }
 
 div.footer {
@@ -89,8 +89,8 @@ div.drools {
 }
 
 div.made-by {
-	margin-left: calc(50% - 236px);
-	height: 50px;
+  margin-left: calc(50% - 236px);
+  height: 50px;
   float: left;
 }
 
