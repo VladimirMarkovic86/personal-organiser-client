@@ -1,141 +1,133 @@
 (ns personal-organiser-client.core
-  (:require [cljsjs.react              :as react]
-            [enfocus.core              :as ef]
-            [enfocus.events            :as events]
-            [personal-organiser-client.ajax :as ajx])
-  (:require-macros [enfocus.macros                            :as em]
-                   [personal-organiser-client.html-generator  :as hg]))
+  (:require [personal-organiser-client.ajax           :as ajx]
+            [personal-organiser-client.grocery        :as gr]
+            [personal-organiser-client.manipulate-dom :as md]
+            [cljs.reader                              :as reader])
+  (:require-macros [personal-organiser-client.html-generator  :as hg]))
 
-(defn success-handler
-  "Simple ajax success handler"
-  [xhr
-   params-map]
-  (let [resp      (aget xhr "response")
-        elements (.getElementsByClassName js/document (:entity params-map))]
-    (.log js/console xhr)
-    (aset (aget elements 0) "innerHTML" (str resp " - success"))
-    ))
+;; BEGIN login
 
-(defn error-handler
-  "Simple ajax error handler"
-  [xhr
-   params-map]
-  (let [resp      (aget xhr "response")
-        elements  (.getElementsByClassName js/document (:entity params-map))]
-    (.log js/console xhr)
-    (aset (aget elements 0) "innerHTML" (str resp " - error"))
-    ))
+(def anim-time 500)
 
-(hg/deftmpl login-form "public/login-form.html")
-(hg/deftmpl template "public/template.html")
-(hg/deftmpl nav "public/nav.html")
-(hg/deftmpl form "public/form.html")
-(hg/deftmpl footer "public/footer.html")
-
-(em/defaction remove-main
+(defn remove-main
+  ""
   []
-  [".header"]
-    (ef/remove-node)
-  [".content"]
-    (ef/remove-node)
-  [".footer"]
-    (ef/remove-node))
+  (md/fade-out ".header" anim-time)
+  (md/fade-out ".content" anim-time)
+  (md/fade-out ".footer" anim-time))
 
-(em/defaction on-page-load
-  []
-  ["body"]
-    (ef/prepend template)
-  [".header"]
-    (ef/content nav)
-  [".content"]
-    (ef/content form)
-  [".footer"]
-    (ef/content footer)
-  ["#aLogoutId"]
-    (events/listen :click
-                   #(do (remove-main)
-                        (is-logged-in "2"))
-     )
-  ["#testBtnId"]
-    (events/listen :click
-                    #(do (ajx/uni-ajax-call
-                           { :url                  "https://localhost:8443/clojure/index1"
-                             :request-method        "POST"
-                              :success-fn            success-handler
-                              :error-fn              error-handler
-                              :request-header-map
-                                {  "Accept"        "application/json"
-                                  "Content-Type"  "application/json"}
-                              :request-property-map
-                                {  "responseType"  "text/javascript"}
-                              :entity                "index1"
-                              })
-                          (ajx/uni-ajax-call
-                            {  :url                  "https://localhost:8443/clojure/index2"
-                              :request-method        "POST"
-                              :success-fn            success-handler
-                              :error-fn              error-handler
-                              :request-header-map
-                                {  "Accept"        "application/json"
-                                  "Content-Type"  "application/json"}
-                              :request-property-map
-                                {  "responseType"  "text/javascript"}
-                              :entity                "index2"
-                              }))
-                    ))
+(defn set-cookie
+  ""
+  [cookie-value]
+  (aset js/document "cookie" cookie-value))
 
-(em/defaction remove-login
+(defn destroy-session-cookie
+  "Destroy session cookie"
   []
-  ["table.login"]
-   (ef/remove-node))
+  (set-cookie (str "session=destroyed; "
+                   "expires=Thu, 01 Jan 1970 00:00:01 GMT; "))
+  )
 
 (defn login-success
   "Login success"
   [xhr]
-  (remove-login)
-  (is-logged-in (aget xhr "response"))
-  )
+  (md/fade-out "table.login" anim-time)
+  (open-main-page))
 
 (defn login-error
   "Login error"
-  []
-  (.log js/console "error"))
+  [xhr
+   params-map]
+  (let [resp               (reader/read-string (aget xhr "response"))
+        email              (md/get-by-id "txtEmailId")
+        password           (md/get-by-id "pswLoginId")]
+       (md/remove-class email "error")
+       (md/remove-class password "error")
+       (md/remove-class email "success")
+       (md/remove-class password "success")
+       (md/add-class email (:email resp))
+       (md/add-class password (:password resp))
+   ))
+
+; document.getElementById("MyElement").classList.add('MyClass');
+
+; document.getElementById("MyElement").classList.remove('MyClass');
+
+; if ( document.getElementById("MyElement").classList.contains('MyClass') )
+
+; document.getElementById("MyElement").classList.toggle('MyClass');
 
 (defn read-login-form
   "Read data from login form"
   []
-  (let [email    (.getElementById js/document "txtEmailId")
-        password (.getElementById js/document "pswLoginId")]
-    {:email      (aget email "value")
-     :password   (aget password "value")}))
+  (let [email    (md/get-by-id "txtEmailId")
+        password (md/get-by-id "pswLoginId")]
+    {:email      (md/get-value email)
+     :password   (md/get-value password)}))
 
-(em/defaction redirect-to-login
+(hg/deftmpl login-form "public/html/login/form.html")
+
+(defn redirect-to-login
+  ""
   []
-  ["body"]
-    (ef/prepend login-form)
-  ["#btnLoginId"]
-    (events/listen :click
-                   #(ajx/uni-ajax-call
-                      {:url                  "https://localhost:8443/clojure/login"
-                       :request-method        "POST"
-                       :success-fn            login-success
-                       :error-fn              login-error
-                       :request-header-map
-                        {"Accept"        "application/json"
-                         "Content-Type"  "application/json"}
-                       :request-property-map
-                        {"responseType"  "application/json"}
-                       :entity                (read-login-form)
-                        }))
+  (md/fade-in "body" login-form anim-time)
+  (md/event "#btnLoginId"
+            "click"
+            #(ajx/uni-ajax-call
+              {:url                   "https://personal-organiser:8443/clojure/login"
+               :request-method        "POST"
+               :success-fn            login-success
+               :error-fn              login-error
+               :request-header-map
+                {"Accept"        "application/json"
+                 "Content-Type"  "application/json"}
+               :request-property-map
+                {"responseType"  "application/json"}
+               :entity                (read-login-form)
+                }))
   )
 
-(defn is-logged-in
-  "Check if user is logged in"
-  [param]
-  (if (= "1" param)
-    (on-page-load)
-    (redirect-to-login))
+;; END login
+;; BEGIN main
+
+(defn logout
+  "Logout"
+  []
+  (remove-main)
+  (destroy-session-cookie)
+  (redirect-to-login))
+
+(hg/deftmpl template "public/html/main/template.html")
+(hg/deftmpl nav "public/html/main/nav.html")
+(hg/deftmpl footer "public/html/main/footer.html")
+
+(defn open-main-page
+  ""
+  []
+  (md/fade-in "body" template anim-time)
+  (md/fade-in ".header" nav anim-time)
+  (md/fade-in ".footer" footer anim-time)
+  (md/event "#aGroceryId" "click" #(gr/grocery-display))
+  (md/event "#aLogoutId" "click" #(logout))
   )
 
-(set! (.-onload js/window) (is-logged-in "2"))
+;; END main
+
+(defn am-i-logged-in
+  "Check if session is active"
+  []
+  (ajx/uni-ajax-call
+   {:url                  "https://personal-organiser:8443/clojure/am-i-logged-in"
+    :request-method       "POST"
+    :success-fn           open-main-page
+    :error-fn             redirect-to-login
+    :request-header-map
+     {"Accept"       "application/json"
+      "Content-Type" "application/json"}
+    :request-property-map
+     {"responseType" "application/json"}
+    :entity               {:user "it's me"}
+    }))
+
+(set! (.-onload js/window) am-i-logged-in)
 

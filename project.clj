@@ -10,11 +10,11 @@
                    [org.clojure/clojurescript "1.9.946"]
                     ; https://clojurescript.org/guides/quick-start#clojurescript-compiler
                     ; https://clojurescript.org/reference/dependencies 
-                   [reagent          "0.8.0-alpha2"]
+                   ; [reagent          "0.8.0-alpha2"]
                     ; https://github.com/reagent-project/reagent
-                   [hiccups          "0.3.0"]
+                   ; [hiccups          "0.3.0"]
                     ; https://github.com/teropa/hiccups
-                   [enfocus          "2.1.1"]
+                   ; [enfocus          "2.1.1"]
                     ; https://github.com/ckirkendall/enfocus
                     ; https://github.com/levand/domina
                    ]
@@ -51,3 +51,4 @@
                      :optimizations :advanced}}
      }}
   )
+

@@ -7,6 +7,17 @@ body {
   background-color: #5881d8;
   color: #fff;
   margin: 0;
+  text-transform: lowercase;
+  font-family: Verdana, Geneva, sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
+a:hover{
+  text-decoration: none;
 }
 
 table.login {
@@ -21,36 +32,34 @@ table.login {
 
 div.header {
   background-color: #91dc47;
-  border-radius: 15px;
-  border: 5px solid white;
-  position:absolute;
-  top:0px;
-  left:0px;
-  right:0px;
-  height:20px;
-  margin: 5px 5px 0 5px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 20px;
+  margin: 0 5px;
+  border-bottom-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-left: 5px solid white;
+  border-right: 5px solid white;
+  border-bottom: 5px solid white;
 }
 
 div.header nav {
   margin-left: calc(50% - 220px);
 }
 
-div.header nav a {
-  text-decoration: none;
-  color: #fff;
-}
-
 div.header nav a:hover{
-  text-decoration: none;
-  color: #63b132;
+  background: linear-gradient(#91DC47, #63B132, #91DC47);
+  border-radius: 15px;
 }
 
 div.content {
   position: absolute;
-  top: 35px;
+  top: 25px;
   width: 80%;
   background-color: #90B4FE;
-  height: calc(100% - 110px);
+  height: calc(100% - 90px);
   margin-left: 10%;
   overflow: auto;
   border-left: 5px solid white;
@@ -60,14 +69,17 @@ div.content {
 div.footer {
   padding: 5px;
   background-color: #91dc47;
-  border-radius:15px;
-  border: 5px solid white;
-  position:absolute;
-  bottom:0px;
-  left:0px;
-  right:0px;
-  height:50px;
-  margin: 0 5px 5px 5px;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 50px;
+  margin: 0 5px;
+  border-left: 5px solid white;
+  border-right: 5px solid white;
+  border-top: 5px solid white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
 div.img {
@@ -110,13 +122,75 @@ input, textarea, select {
 /*  box-shadow: inset 1px 1px 2px #ddd8dc;*/
 }
 
+textarea {
+  padding: 5px;
+}
+
 input[type="button"] {
   width: auto;
+  text-transform: lowercase;
 }
 
 input[type="button"]:hover {
   background-color: #63b132;
 }
+
+.error {
+  background-color: #ff8484;
+}
+
+div#sidebar {
+  float: left;
+  padding: 5px;
+  border-right: 5px solid white;
+  border-bottom: 5px solid white;
+  border-bottom-right-radius: 15px;
+  background-color: #63B132;
+}
+
+@keyframes fade-in {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.fade-in {
+  position: relative;
+  animation: fade-in 0.5s;
+}
+
+@keyframes fade-out {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.fade-out {
+  position: relative;
+  animation: fade-out 0.5s;
+}
+
+div#sidebar ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+div#sidebar ul li {
+  
+}
+
+div#sidebar a:hover{
+  background: linear-gradient(#63B132, #91DC47, #63B132);
+  border-radius: 15px;
+}
+
+div#mainContent {
+  float: left;
+}
+
+
+
+
+
 
 
 

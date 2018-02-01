@@ -47,10 +47,24 @@
 (defn uni-ajax-call
   "Universal ajax call
   
-  :url                    Define url address to communicate with
+  :url                     Define url address to communicate with
   :request-method          Define request method ex. GET, POST...
-  :success-fn              Define function which will handle success
-  :error-fn                Define function which will handle error
+  :success-fn              Specify function name which will handle success
+
+                           example: (defn success-handler
+                                      \"Simple ajax success handler\"
+                                      [xhr
+                                       params-map]
+                                      implementation..)
+
+  :error-fn                Specify function name which will handle error
+
+                           example: (defn error-handler
+                                      \"Simple ajax error handler\"
+                                      [xhr
+                                       params-map]
+                                      implementation..)
+
   :request-header-map      Define map with key value pairs for request header
   :request-property-map    Define map with key value pairs for setting property values
   :entity                  Define content that you want to send"
