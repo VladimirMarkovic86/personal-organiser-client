@@ -7,7 +7,7 @@
 
 ;; BEGIN login
 
-(def anim-time 500)
+(def anim-time 100)
 
 (defn remove-main
   ""
@@ -107,7 +107,7 @@
   (md/fade-in "body" template anim-time)
   (md/fade-in ".header" nav anim-time)
   (md/fade-in ".footer" footer anim-time)
-  (md/event "#aGroceryId" "click" #(gr/grocery-display))
+  (md/event "#aGroceryId" "click" #(gr/grocery-nav-link))
   (md/event "#aLogoutId" "click" #(logout))
   )
 
