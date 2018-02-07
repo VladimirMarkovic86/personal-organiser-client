@@ -7,7 +7,7 @@
 
 ;; BEGIN login
 
-(def anim-time 100)
+(def anim-time 300)
 
 (defn remove-main
   ""

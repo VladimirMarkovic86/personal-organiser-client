@@ -1,4 +1,5 @@
-(ns personal-organiser-client.ajax)
+(ns personal-organiser-client.ajax
+  (:require [personal-organiser-client.manipulate-dom :as md]))
 
 (defn- onload
   "Ajax onload function"
@@ -14,7 +15,8 @@
           2 (.log js/console "HEADERS_RECEIVED")
           3 (.log js/console "LOADING")
           ((:error-fn params-map) xhr params-map))
-    ))
+    )
+  (md/end-please-wait))
 
 (defn- onready
   "Ajax onreadystatechange function"
@@ -30,7 +32,8 @@
           2 (.log js/console "HEADERS_RECEIVED")
           3 (.log js/console "LOADING")
           ((:error-fn params-map) xhr params-map))
-    ))
+   )
+  (md/end-please-wait))
 
 (defn- set-request-header
   "Set request header"
@@ -69,6 +72,7 @@
   :request-property-map    Define map with key value pairs for setting property values
   :entity                  Define content that you want to send"
   [params-map]
+  (md/start-please-wait)
   (let [xhr (js/XMLHttpRequest.)]
     (aset xhr
           "onload"

@@ -9,7 +9,7 @@
                     ; https://clojure.org/api/api
                    [org.clojure/clojurescript "1.9.946"]
                     ; https://clojurescript.org/guides/quick-start#clojurescript-compiler
-                    ; https://clojurescript.org/reference/dependencies 
+                    ; https://clojurescript.org/reference/dependencies
                    ; [reagent          "0.8.0-alpha2"]
                     ; https://github.com/reagent-project/reagent
                    ; [hiccups          "0.3.0"]

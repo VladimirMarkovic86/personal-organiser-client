@@ -167,11 +167,87 @@ div#mainContent {
   float: left;
 }
 
+div.please-wait-anim {
+  position: absolute;
+  z-index: 2;
+  left: calc(50% - 97px);
+  top: calc(50% - 45px);
+  width: 195px;
+  height: 90px;
+  background-image: url('../images/please-wait.gif');
+  background-repeat: no-repeat;
+  background-size: 195px 90px;
+}
 
+div.please-wait-background {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background-color: #fff;
+  opacity: 0.2;
+}
 
+table.groceries {
+  display: contents;
+}
 
+table.groceries tr td {
+  padding: 2px;
+}
 
+table.groceries tr:nth-child(2n+1) td {
+  padding: 4px 2px;
+}
 
+table.groceries tr:nth-child(2n+1) td:first-child {
+  padding-left: 4px;
+  padding-right: 2px;
+}
+
+table.groceries tr:nth-child(2n+1) td:last-child {
+  padding-left: 2px;
+  padding-right: 4px;
+}
+
+table.groceries tr:nth-child(2n) td {
+  background-color: #a5c3ff;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+table.groceries tr:nth-child(2n) td:first-child {
+  border-left: 2px solid white;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+table.groceries tr:nth-child(2n) td:last-child {
+  border-right: 2px solid white;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+table.groceries tr:hover td {
+  background-color: #5881D8;
+  padding: 2px;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+table.groceries tr:hover td:first-child {
+  border-left: 2px solid white;
+  padding-left: 2px;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+table.groceries tr:hover td:last-child {
+  border-right: 2px solid white;
+  padding-right: 2px;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
 
 
 

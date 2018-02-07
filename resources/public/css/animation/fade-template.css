@@ -1,0 +1,11 @@
+<style id="style-identification"
+       type="text/css" >
+  @keyframes animation-name-class {
+    from {opacity: from-opacity;}
+    to {opacity: to-opacity;}
+  }
+
+  .animation-name-class {
+    animation: animation-name-class animation-durations;
+  }
+</style>
