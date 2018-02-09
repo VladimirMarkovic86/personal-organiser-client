@@ -1,8 +1,10 @@
 (ns personal-organiser-client.core
-  (:require [personal-organiser-client.ajax           :as ajx]
-            [personal-organiser-client.grocery        :as gr]
-            [personal-organiser-client.manipulate-dom :as md]
-            [cljs.reader                              :as reader])
+  (:require [personal-organiser-client.ajax                :as ajx]
+            [personal-organiser-client.grocery             :as gr]
+            [personal-organiser-client.manipulate-dom      :as md]
+            [personal-organiser-client.http.request-header :as rh]
+            [personal-organiser-client.http.entity-header  :as eh]
+            [personal-organiser-client.http.mime-type      :as mt])
   (:require-macros [personal-organiser-client.html-generator  :as hg]))
 
 ;; BEGIN login
@@ -38,15 +40,15 @@
   "Login error"
   [xhr
    params-map]
-  (let [resp               (reader/read-string (aget xhr "response"))
+  (let [response           (ajx/get-response xhr)
         email              (md/get-by-id "txtEmailId")
         password           (md/get-by-id "pswLoginId")]
        (md/remove-class email "error")
        (md/remove-class password "error")
        (md/remove-class email "success")
        (md/remove-class password "success")
-       (md/add-class email (:email resp))
-       (md/add-class password (:password resp))
+       (md/add-class email (:email response))
+       (md/add-class password (:password response))
    ))
 
 ; document.getElementById("MyElement").classList.add('MyClass');
@@ -73,19 +75,20 @@
   (md/fade-in "body" login-form anim-time)
   (md/event "#btnLoginId"
             "click"
-            #(ajx/uni-ajax-call
+            (fn [sl-node]
+             (ajx/uni-ajax-call
               {:url                   "https://personal-organiser:8443/clojure/login"
                :request-method        "POST"
                :success-fn            login-success
                :error-fn              login-error
                :request-header-map
-                {"Accept"        "application/json"
-                 "Content-Type"  "application/json"}
+                {(rh/accept)        (mt/text-plain)
+                 (eh/content-type)  (mt/text-plain)}
                :request-property-map
-                {"responseType"  "application/json"}
+                {"responseType"  (mt/text-plain)}
                :entity                (read-login-form)
-                }))
-  )
+               }))
+   ))
 
 ;; END login
 ;; BEGIN main
@@ -102,14 +105,15 @@
 (hg/deftmpl footer "public/html/main/footer.html")
 
 (defn open-main-page
-  ""
+  "Open main page"
   []
   (md/fade-in "body" template anim-time)
   (md/fade-in ".header" nav anim-time)
   (md/fade-in ".footer" footer anim-time)
-  (md/event "#aGroceryId" "click" #(gr/grocery-nav-link))
-  (md/event "#aLogoutId" "click" #(logout))
-  )
+  (md/event "#aGroceryId" "click" (fn [sl-node] (gr/grocery-nav-link))
+   )
+  (md/event "#aLogoutId" "click" (fn [sl-node] (logout))
+   ))
 
 ;; END main
 
@@ -122,10 +126,10 @@
     :success-fn           open-main-page
     :error-fn             redirect-to-login
     :request-header-map
-     {"Accept"       "application/json"
-      "Content-Type" "application/json"}
+     {(rh/accept)       (mt/text-plain)
+      (eh/content-type) (mt/text-plain)}
     :request-property-map
-     {"responseType" "application/json"}
+     {"responseType" (mt/text-plain)}
     :entity               {:user "it's me"}
     }))
 

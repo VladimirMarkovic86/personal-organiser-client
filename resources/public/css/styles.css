@@ -135,6 +135,10 @@ input[type="button"]:hover {
   background-color: #63b132;
 }
 
+input[type="radio"] {
+  width: auto;
+}
+
 .error {
   background-color: #ff8484;
 }
@@ -248,6 +252,13 @@ table.groceries tr:hover td:last-child {
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
+
+
+
+
+
+
+
 
 
 

@@ -1,5 +1,12 @@
 (ns personal-organiser-client.ajax
-  (:require [personal-organiser-client.manipulate-dom :as md]))
+  (:require [personal-organiser-client.manipulate-dom :as md]
+            [cljs.reader                              :as reader]))
+
+(defn get-response
+  "Get response from XMLHttpRequest"
+  [xhr]
+  (reader/read-string (aget xhr "response"))
+  )
 
 (defn- onload
   "Ajax onload function"
@@ -9,13 +16,15 @@
               4)
            (= (aget xhr "status")
               200))
-    ((:success-fn params-map) xhr params-map)
+    (do (.log js/console xhr)
+        ((:success-fn params-map) xhr params-map))
     (case (aget xhr "status")
           1 (.log js/console "OPENED")
           2 (.log js/console "HEADERS_RECEIVED")
           3 (.log js/console "LOADING")
-          ((:error-fn params-map) xhr params-map))
-    )
+          (do (.log js/console xhr)
+              ((:error-fn params-map) xhr params-map))
+     ))
   (md/end-please-wait))
 
 (defn- onready

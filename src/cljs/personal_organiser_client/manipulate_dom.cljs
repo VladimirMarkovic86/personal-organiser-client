@@ -10,7 +10,7 @@
 (defn html?
   ""
   [data]
-  (= (.indexOf (aget (type data) "name") "HTML") -1))
+  (< -1(.indexOf (aget (type data) "name") "HTML")))
 
 (defn convert-to-vector
   "Convert html NodeList object to clojure vector"
@@ -65,6 +65,12 @@
   [element]
   (aget element "value"))
 
+(defn set-value
+  "Sets elements value"
+  [element
+   new-value]
+  (aset element "value" new-value))
+
 (defn get-child-nodes
   "Fetch child nodes of element param"
   [element]
@@ -110,24 +116,41 @@
     (aset sl-node "innerHTML" html-content))
    ))
 
+(defn determine-param-type
+  ""
+  [exec-fn
+   param]
+  (if (string? param)
+   (exec-fn param)
+   (if (html? param)
+    param
+    []))
+  )
+
 (defn event
   "Bind function to event on elements fetched by selector
   
-   (event selector \"click\" #(execute-function))"
-  [selector
+   (event param \"click\" #(execute-function))
+   
+   param - it could be selector as string or html element"
+  [param
    event-type
    execute-function]
-  (let [selected-nodes   (query-selector-all selector)]
-   (doseq [sl-node selected-nodes]
-    (.addEventListener sl-node event-type execute-function))
-   ))
+  (let [selected-nodes   (determine-param-type query-selector-all param)]
+   (if (vector? selected-nodes)
+    (doseq [sl-node selected-nodes]
+     (.addEventListener sl-node event-type #(execute-function sl-node))
+     )
+    (.addEventListener selected-nodes event-type #(execute-function selected-nodes))
+    ))
+  )
 
 (defn prepend-element
   "Prepend html string in elements fetched by selector"
   [selector
    html-content]
   (let [selected-nodes      (query-selector-all selector)
-        child-nodes         (parse-html html-content)]
+        child-nodes         (determine-param-type parse-html html-content)]
    (doseq [sl-node selected-nodes]
     (doseq [ch-node child-nodes]
      (let [insert-before-this (first (get-child-nodes sl-node))]
@@ -140,14 +163,12 @@
   [selector
    html-content]
   (let [selected-nodes     (query-selector-all selector)
-        child-nodes        (if (string? html-content)
-                            (parse-html html-content)
-                            (if (html? html-content)
-                             html-content
-                             []))]
+        child-nodes        (determine-param-type parse-html html-content)]
    (doseq [sl-node selected-nodes]
-    (doseq [ch-node child-nodes]
-     (.appendChild sl-node ch-node))
+    (if (vector? child-nodes)
+     (doseq [ch-node child-nodes]
+      (.appendChild sl-node ch-node))
+     (.appendChild sl-node child-nodes))
     ))
   )
 
@@ -274,6 +295,24 @@
     (append-element "head" replaced-to))
    nil))
 
+(defn fade-in-ieration
+  ""
+  [ch-node
+   sl-node
+   anim-name-class
+   style-id
+   delay-time]
+  (let [node-name           (get-node-name ch-node)
+        insert-before-this  (query-selector-on-element sl-node "div.scripts")]
+   (if-not (= "#text" node-name)
+    (do (add-class ch-node anim-name-class)
+        (.insertBefore sl-node ch-node insert-before-this)
+        (timeout #(do (remove-class ch-node anim-name-class)
+                      (remove-node (str "style#" style-id)))
+                 delay-time))
+    nil))
+  )
+
 (defn fade-in
   "Fade in html string content in elements fetched by selector during delay time
   
@@ -308,21 +347,14 @@
                      from-opac
                      to-opac)
    (let [selected-nodes     (query-selector-all selector)
-         child-nodes        (parse-html html-content)]
+         child-nodes        (determine-param-type parse-html html-content)]
     (doseq [sl-node selected-nodes]
-     (doseq [ch-node child-nodes]
-      (let [node-name           (get-node-name ch-node)
-            insert-before-this  (query-selector-on-element sl-node "div.scripts")]
-       (if-not (= "#text" node-name)
-        (do (add-class ch-node anim-name-class)
-            (.insertBefore sl-node ch-node insert-before-this)
-            (timeout #(do (remove-class ch-node anim-name-class)
-                          (remove-node (str "style#" style-id)))
-                     delay-time))
-        nil))
-      ))
-    ))
-  )
+     (if (vector? child-nodes)
+      (doseq [ch-node child-nodes]
+       (fade-in-ieration ch-node sl-node anim-name-class style-id delay-time))
+      (fade-in-ieration child-nodes sl-node anim-name-class style-id delay-time))
+     ))
+   ))
 
 (defn fade-out
   "Fade out html string content in elements fetched by selector during delay time
@@ -385,43 +417,45 @@
   [table-node
    data-header]
   (swap! table-node str "<thead><tr>")
-  (doseq [[hkey hvalue] (into [] data-header)]
-   (swap! table-node str "<th"
-                         (if (:colspan hvalue)
-                             (str " colspan=" (:colspan hvalue))
-                             "")
-                         ">"
-                         (:content hvalue)
-                         "</th>"))
+  (let [data-header-values (into [] (map vals data-header))]
+   (doseq [hvalue data-header-values]
+    (let [hvalue-unwrapped (first hvalue)]
+     (swap! table-node str "<th"
+                           (if (:colspan hvalue-unwrapped)
+                               (str " colspan=" (:colspan hvalue-unwrapped))
+                               "")
+                           ">"
+                           (:content hvalue-unwrapped)
+                           "</th>"))
+    ))
   (swap! table-node str "</tr></thead>"))
 
 (defn- generate-tbody
   "Generate tbody for table"
   [table-node
-   data-columns
    data-list]
   (swap! table-node str "<tbody>")
   (doseq [data-row data-list]
    (swap! table-node str "<tr>")
-    (doseq [hkey data-columns]
-     (swap! table-node str "<td>" (hkey data-row) "</td>"))
+    (doseq [data-col-value data-row]
+     (swap! table-node str "<td>"
+                           data-col-value
+                           "</td>"))
    (swap! table-node str "</tr>"))
   (swap! table-node str "</tbody>"))
 
 (defn table-with-data
   "Generate table with data"
   [data-header
-   data-columns
    data-list
    table-attrs]
   (let [table-node (atom "")]
    (swap! table-node str "<table ")
    (doseq [[attr-name attr-value] table-attrs]
-    (swap! table-node str " " attr-name "=\"" attr-value "\"")
-    )
+    (swap! table-node str " " attr-name "=\"" attr-value "\""))
    (swap! table-node str " >")
    (generate-thead table-node data-header)
-   (generate-tbody table-node data-columns data-list)
+   (generate-tbody table-node data-list)
    (swap! table-node str "</table>")
    @table-node))
 
@@ -458,4 +492,27 @@
             "please-wait-background"
             0.2
             0))
+
+(defn is-checked?
+  ""
+  [element]
+  (get-attr element "checked"))
+
+(defn checked-value-with-index
+  ""
+  [radio-group-elements
+   index]
+  (if (< index (count radio-group-elements))
+   (if (is-checked? (radio-group-elements index))
+    (get-value (radio-group-elements index))
+    (recur radio-group-elements (inc index))
+    )
+   nil))
+
+(defn checked-value
+  ""
+  [radio-group-name]
+  (let [radio-group-elements (query-selector-all (str "input[name='" radio-group-name "']"))]
+   (checked-value-with-index radio-group-elements 0))
+  )
 
