@@ -9,9 +9,8 @@
 (hg/deftmpl nav "public/html/grocery/nav.html")
 (hg/deftmpl form "public/html/grocery/form.html")
 (hg/deftmpl table "public/html/grocery/table.html")
-(hg/deftmpl template "public/html/grocery/template.html")
 
-(def anim-time 300)
+(def anim-time 100)
 
 (defn grocery-update-success
   ""
@@ -81,8 +80,7 @@
     (md/set-attr radio-vegetarian "checked" true))
    (md/set-value textarea-description (:description grocery))
    (md/set-value input-submit "Update")
-   (md/event input-submit "click" (fn [sl-node] (update-grocery))
-    )
+   (md/event input-submit "onclick" update-grocery)
    html-form))
 
 (defn grocery-edit-success
@@ -90,11 +88,11 @@
   [xhr]
   (let [response  (ajx/get-response xhr)
         grocery   (:grocery response)]
-   (md/fade-out "#mainContent"
+   (md/fade-out ".content"
                 anim-time
-                "mainContent"
+                "content"
                 true)
-   (md/timeout #(md/fade-in "#mainContent"
+   (md/timeout #(md/fade-in ".content"
                             (fill-out-grocery-form grocery)
                             anim-time)
                anim-time))
@@ -105,14 +103,15 @@
   [xhr]
   (let [response      (ajx/get-response xhr)
         error-message (:error-message response)]
-   (md/fade-in "#mainContent"
+   (md/fade-in ".content"
                (str "<div>" error-message "</div>")
                anim-time))
   )
 
 (defn edit-grocery
   ""
-  [sl-node]
+  [[]
+   sl-node]
   (ajx/uni-ajax-call
    {:url              "https://personal-organiser:8443/clojure/get-grocery-by-name"
     :request-method   "POST"
@@ -126,62 +125,91 @@
     :entity           {:search    {:gname (md/get-attr sl-node "edit-id")}
                        :data-type "grocery"}}))
 
+(def grocery-columns [:gname
+                      :calories
+                      :fats
+;                      :proteins
+                      :carbonhydrates
+                      :water
+;                      :description
+;                      :origin
+                      :option
+                      ])
+
+(def grocery-header [{:content    "Name"
+                      :column     {"text-align" "left"}}
+                     {:content    "Calories"
+                      :column     {"text-align" "right"}}
+                     {:content    "Fats"
+                      :column     {"text-align" "right"}}
+;                     {:content    "Proteins"}
+                     {:content    "Carbonhydrates"
+                      :header     {"width"      "50px"
+                                   "text-align" "right"}
+                      :column     {"text-align" "right"}}
+                     {:content    "Water"
+                      :column     {"text-align" "right"}}
+;                     {:content    "Description"
+;                      :header     {"width" "50px"}
+;                      :column     {"width" "50px"}}
+;                     {:content "Origin"}
+                     {:content    "Option"
+                      :colspan    2}
+                      ])
+
 (defn grocery-to-vector
   ""
-  [grocery
-   grocery-header]
-  (let [grocery-vector      (atom [])
-        grocery-header-keys (into [] (map keys grocery-header))]
-   (doseq [grocery-header-key grocery-header-keys]
-    (let [grocery-header-key-unwrapped (first grocery-header-key)]
-     (if (= :option grocery-header-key-unwrapped)
-      (swap! grocery-vector conj (str "<a"
-                                      " edit-id=\""
-                                      (:gname grocery)
-                                      "\" >edit</a>")
-                                 (str "<a"
-                                      " delete-id=\""
-                                      (:gname grocery)
-                                      "\" >delete</a>"))
-      (swap! grocery-vector conj (grocery-header-key-unwrapped grocery))
-      ))
-    )
+  [grocery]
+  (let [grocery-vector   (atom [])]
+   (doseq [grocery-column grocery-columns]
+    (if (= :option grocery-column)
+     (swap! grocery-vector conj {:title "edit"
+                                 :data  (str "<a"
+                                             " edit-id=\""
+                                             (:gname grocery)
+                                             "\" >edit</a>")}
+                                {:title "delete"
+                                 :data  (str "<a"
+                                             " delete-id=\""
+                                             (:gname grocery)
+                                             "\" >delete</a>")})
+     (swap! grocery-vector conj (grocery-column grocery))
+     ))
    @grocery-vector))
 
 (defn conj-grocery
   ""
   [accumulation
-   grocery-as-map
-   grocery-header]
+   grocery-as-map]
   (conj accumulation
-        (grocery-to-vector grocery-as-map
-                           grocery-header))
+        (grocery-to-vector grocery-as-map))
   )
 
 (defn groceries-as-vectors
   ""
-  [groceries-as-map
-   grocery-header]
+  [groceries-as-map]
   (reduce (fn [accumulation
                grocery-as-map]
            (conj-grocery accumulation
-                         grocery-as-map
-                         grocery-header)) [] groceries-as-map))
+                         grocery-as-map)) [] groceries-as-map))
 
 (defn grocery-table-data-success
   "Handle table generation success"
   [xhr]
   (let [response         (ajx/get-response xhr)
-        grocery-header   (:grocery-header response)
-        grocery-columns  (:grocery-columns response)
-        groceries        (groceries-as-vectors (:groceries response)
-                                               grocery-header)]
-   (md/fade-in "#mainContent" (md/table-with-data grocery-header
-                                                  groceries
-                                                  [["class"  "groceries"]])
-                              anim-time)
-   (md/event "a[edit-id]" "click" (fn [sl-node] (edit-grocery sl-node))
-    ))
+        groceries        (groceries-as-vectors (:groceries response))]
+   (md/fade-out ".content"
+                anim-time
+                "content"
+                true)
+   (md/timeout #(do (md/fade-in ".content"
+                                (md/table-with-data
+                                 grocery-header
+                                 groceries
+                                 "groceries")
+                                anim-time)
+                    (md/event "a[edit-id]" "onclick" edit-grocery))
+               anim-time))
   )
 
 (defn grocery-table-data-error
@@ -189,7 +217,7 @@
   [xhr]
   (let [response      (ajx/get-response xhr)
         error-message (:error-message response)]
-   (md/fade-in "#mainContent" (str "<div>" error-message "</div>") anim-time))
+   (md/fade-in ".content" (str "<div>" error-message "</div>") anim-time))
   )
 
 (defn get-groceries
@@ -210,21 +238,39 @@
 (defn create-grocery-form
   "Render from for grocery creation"
   []
-  (md/fade-out "#mainContent"
+  (md/fade-out ".content"
                anim-time
-               "mainContent"
+               "content"
                true)
-  (md/timeout #(md/fade-in "#mainContent" form anim-time)
+  (md/timeout #(md/fade-in ".content" form anim-time)
               anim-time))
 
 (defn grocery-nav-link
   "Process these functions after link is clicked in main menu"
   []
-  (md/inner-html ".content" "")
-  (md/fade-in ".content" template anim-time)
-  (md/fade-in "#sidebar" nav anim-time)
-  (md/event "#aCreateGroceryId" "click" (fn [sl-node] (create-grocery-form))
-   )
-  (get-groceries {:search    {}
-                  :data-type "grocery"}))
+  (md/fade-out ".content"
+               anim-time
+               "content"
+               true)
+  (md/fade-out ".sidebar-menu"
+               anim-time
+               "sidebar-menu"
+               true)
+  (md/timeout #(do (md/fade-in ".sidebar-menu" nav anim-time)
+                   (md/event "#aCreateGroceryId"
+                             "onclick"
+                             create-grocery-form)
+                   (md/event "#aShowAllGroceriesId"
+                             "onclick"
+                             get-groceries
+                             {:query       {}
+                              :projection  grocery-columns
+                              :qsort       [{:column :gname :direction :asc}
+                                            {:column :calories :direction :desc}]})
+                   (get-groceries
+                    {:query       {}
+                     :projection  grocery-columns
+                     :qsort       [{:column :gname :direction :asc}
+                                   {:column :calories :direction :desc}]}))
+              anim-time))
 

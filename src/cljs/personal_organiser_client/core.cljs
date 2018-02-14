@@ -9,12 +9,13 @@
 
 ;; BEGIN login
 
-(def anim-time 300)
+(def anim-time 100)
 
 (defn remove-main
   ""
   []
   (md/fade-out ".header" anim-time)
+  (md/fade-out ".sidebar-menu" anim-time)
   (md/fade-out ".content" anim-time)
   (md/fade-out ".footer" anim-time))
 
@@ -51,10 +52,6 @@
        (md/add-class password (:password response))
    ))
 
-; document.getElementById("MyElement").classList.add('MyClass');
-
-; document.getElementById("MyElement").classList.remove('MyClass');
-
 ; if ( document.getElementById("MyElement").classList.contains('MyClass') )
 
 ; document.getElementById("MyElement").classList.toggle('MyClass');
@@ -64,8 +61,8 @@
   []
   (let [email    (md/get-by-id "txtEmailId")
         password (md/get-by-id "pswLoginId")]
-    {:email      (md/get-value email)
-     :password   (md/get-value password)}))
+   {:email      (md/get-value email)
+    :password   (md/get-value password)}))
 
 (hg/deftmpl login-form "public/html/login/form.html")
 
@@ -74,21 +71,18 @@
   []
   (md/fade-in "body" login-form anim-time)
   (md/event "#btnLoginId"
-            "click"
-            (fn [sl-node]
-             (ajx/uni-ajax-call
-              {:url                   "https://personal-organiser:8443/clojure/login"
-               :request-method        "POST"
-               :success-fn            login-success
-               :error-fn              login-error
-               :request-header-map
-                {(rh/accept)        (mt/text-plain)
-                 (eh/content-type)  (mt/text-plain)}
-               :request-property-map
-                {"responseType"  (mt/text-plain)}
-               :entity                (read-login-form)
-               }))
-   ))
+            "onclick"
+            ajx/uni-ajax-call
+            {:url                   "https://personal-organiser:8443/clojure/login"
+             :request-method        "POST"
+             :success-fn            login-success
+             :error-fn              login-error
+             :request-header-map
+              {(rh/accept)        (mt/text-plain)
+               (eh/content-type)  (mt/text-plain)}
+             :request-property-map
+              {"responseType"  (mt/text-plain)}
+             :entity                read-login-form}))
 
 ;; END login
 ;; BEGIN main
@@ -110,10 +104,8 @@
   (md/fade-in "body" template anim-time)
   (md/fade-in ".header" nav anim-time)
   (md/fade-in ".footer" footer anim-time)
-  (md/event "#aGroceryId" "click" (fn [sl-node] (gr/grocery-nav-link))
-   )
-  (md/event "#aLogoutId" "click" (fn [sl-node] (logout))
-   ))
+  (md/event "#aGroceryId" "onclick" gr/grocery-nav-link)
+  (md/event "#aLogoutId" "onclick" logout))
 
 ;; END main
 

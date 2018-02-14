@@ -143,32 +143,32 @@ input[type="radio"] {
   background-color: #ff8484;
 }
 
-div#sidebar {
-  float: left;
-  padding: 5px;
-  border-right: 5px solid white;
-  border-bottom: 5px solid white;
-  border-bottom-right-radius: 15px;
+div.sidebar-menu {
+  position: absolute;
+  top: 25px;
+  right: 90%;
+  max-width: 6.6%;
   background-color: #63B132;
+  border-left: 5px solid white;
+  border-bottom: 5px solid white;
+  border-bottom-left-radius: 15px;
+  padding: 5px;
 }
 
-div#sidebar ul {
+div.sidebar-menu ul {
   list-style-type: none;
   padding-left: 0;
   margin: 0;
 }
 
-div#sidebar ul li {
+div.sidebar-menu ul li {
   
 }
 
-div#sidebar a:hover{
+div.sidebar-menu a:hover,
+div.sidebar-menu a.selected {
   background: linear-gradient(#63B132, #91DC47, #63B132);
   border-radius: 15px;
-}
-
-div#mainContent {
-  float: left;
 }
 
 div.please-wait-anim {
@@ -192,65 +192,133 @@ div.please-wait-background {
   opacity: 0.2;
 }
 
-table.groceries {
-  display: contents;
+.groceries {
+  margin: 10px;
 }
 
-table.groceries tr td {
+.groceries table {
+  display: contents;
+  font-size: small;
+}
+
+.groceries table tr td {
   padding: 2px;
 }
 
-table.groceries tr:nth-child(2n+1) td {
-  padding: 4px 2px;
+/* begin odd header row style */
+
+.groceries table tr th {
+  padding: 0 10px;
+  text-align: center;
 }
 
-table.groceries tr:nth-child(2n+1) td:first-child {
-  padding-left: 4px;
-  padding-right: 2px;
-}
-
-table.groceries tr:nth-child(2n+1) td:last-child {
-  padding-left: 2px;
-  padding-right: 4px;
-}
-
-table.groceries tr:nth-child(2n) td {
-  background-color: #a5c3ff;
+.groceries table tr:nth-child(2n+1) th {
+  background-color: #91DC47;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-table.groceries tr:nth-child(2n) td:first-child {
+.groceries table tr:nth-child(2n+1) th:first-child {
   border-left: 2px solid white;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-table.groceries tr:nth-child(2n) td:last-child {
+.groceries table tr:nth-child(2n+1) th:last-child {
   border-right: 2px solid white;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-table.groceries tr:hover td {
+.groceries table tr:nth-child(2n+1) th:nth-child(2n) {
+  background: linear-gradient(to right, #91DC47, #63B132 30%, #63B132 70%, #91DC47);
+}
+
+/* end odd header row style */
+
+/* begin odd row style */
+
+.groceries table tr:nth-child(2n+1) td {
+  padding: 4px 2px;
+}
+
+.groceries table tr:nth-child(2n+1) td:first-child {
+  padding-left: 4px;
+  padding-right: 2px;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.groceries table tr:nth-child(2n+1) td:last-child {
+  padding-left: 2px;
+  padding-right: 4px;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.groceries table tr:nth-child(2n+1) td:nth-child(2n) {
+  background: linear-gradient(to right, #90B4FE, #A5C3FF 30%, #A5C3FF 70%, #90B4FE);
+}
+
+/* end odd row style */
+
+/* begin even row style */
+
+.groceries table tr:nth-child(2n) td {
+  background-color: #a5c3ff;
+  border-top: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+.groceries table tr:nth-child(2n) td:first-child {
+  border-left: 2px solid white;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.groceries table tr:nth-child(2n) td:last-child {
+  border-right: 2px solid white;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.groceries table tr:nth-child(2n) td:nth-child(2n) {
+  background: linear-gradient(to right, #A5C3FF, #90B4FE 30%, #90B4FE 70%, #A5C3FF);
+}
+
+/* end even row style */
+
+/* begin row hover style */
+
+.groceries table tr:hover td {
   background-color: #5881D8;
   padding: 2px;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-table.groceries tr:hover td:first-child {
+.groceries table tr:hover td:first-child {
   border-left: 2px solid white;
   padding-left: 2px;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-table.groceries tr:hover td:last-child {
+.groceries table tr:hover td:last-child {
   border-right: 2px solid white;
   padding-right: 2px;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
+}
+
+.groceries table tr:hover td:nth-child(2n) {
+  background: linear-gradient(to right, #5881D8, #4670C9 30%, #4670C9 70%, #5881D8);
+}
+
+/* end row hover style */
+
+.groceries a {
+  cursor: pointer;
 }
 
 

@@ -79,7 +79,9 @@
 
   :request-header-map      Define map with key value pairs for request header
   :request-property-map    Define map with key value pairs for setting property values
-  :entity                  Define content that you want to send"
+  :entity                  Define content that you want to send
+  :entity-fn-params        In case entity is a function, define vector of it's params
+                            example: [param1 param2]"
   [params-map]
   (md/start-please-wait)
   (let [xhr (js/XMLHttpRequest.)]
@@ -96,6 +98,10 @@
      (set-request-header xhr [k v]))
     (doseq [[k v] (:request-property-map params-map)]
      (set-request-property xhr [k v]))
-    (.send xhr (:entity params-map))
-    ))
+    (.send xhr
+           (if (fn? (:entity params-map))
+            ((:entity params-map) (:entity-fn-params params-map))
+            (:entity params-map))
+     ))
+  )
 
