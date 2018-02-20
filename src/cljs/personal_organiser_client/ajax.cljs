@@ -5,8 +5,11 @@
 (defn get-response
   "Get response from XMLHttpRequest"
   [xhr]
-  (reader/read-string (aget xhr "response"))
-  )
+  (try
+   (reader/read-string (aget xhr "response"))
+   (catch js/Error e
+    (.log js/console e))
+   ))
 
 (defn- onload
   "Ajax onload function"

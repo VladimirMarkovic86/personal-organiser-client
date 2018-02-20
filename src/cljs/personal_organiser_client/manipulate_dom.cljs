@@ -1,5 +1,15 @@
 (ns personal-organiser-client.manipulate-dom
+  (:require [personal-organiser-client.http.mime-type      :as mt]
+            [personal-organiser-client.http.request-header :as rh]
+            [personal-organiser-client.http.entity-header  :as eh])
   (:require-macros [personal-organiser-client.html-generator  :as hg]))
+
+(def anim-time 100)
+
+(defn get-url
+  ""
+  []
+  (aget js/document "URL"))
 
 (defn html?
   ""
@@ -26,7 +36,8 @@
   "Select all element of what css selector fetches from document
    returns collection of elements (html nodes)"
   [selector]
-  (convert-to-vector (.querySelectorAll js/document selector)))
+  (convert-to-vector (.querySelectorAll js/document selector))
+  )
 
 (defn query-selector-on-element
   "Select first element of what css selector fetches from element param
@@ -40,7 +51,8 @@
    returns collection of elements (html nodes)"
   [element
    selector]
-  (.querySelectorAll element selector))
+  (convert-to-vector (.querySelectorAll element selector))
+  )
 
 (defn get-by-id
   "Select element by id
@@ -74,6 +86,13 @@
   "Get parentNode property"
   [element]
   (aget element "parentNode"))
+
+(defn ancestor
+  ""
+  [element
+   ancestor-level]
+  (reduce (fn [acc elem] (get-parent-node acc)) element (range ancestor-level))
+  )
 
 (defn replace-single
   ""
@@ -198,7 +217,7 @@
 (defn event
   "Bind function to event on elements fetched by selector
   
-   (event element \"onclick\" event-function [1 2 3]))
+   (event element \"onclick\" event-function [1 2 3])
    
    element         Represents selector or html element
    event-type      Represents html event, like onclick, onload...
@@ -319,6 +338,18 @@
   (let [selected-nodes   (query-selector-all selector)]
    (doseq [sl-node selected-nodes]
     (.removeChild (get-parent-node sl-node) sl-node))
+   ))
+
+(defn remove-node-from-element
+  "Remove elements fetched by selector"
+  [element
+   selector]
+  (let [element-nodes     (determine-param-type query-selector-all element)]
+   (doseq [element-node  element-nodes]
+    (let [selected-nodes   (query-selector-all-on-element element-node selector)]
+     (doseq [sl-node selected-nodes]
+      (.removeChild (get-parent-node sl-node) sl-node))
+     ))
    ))
 
 (defn timeout
@@ -546,214 +577,6 @@
             delay-time))
   )
 
-(hg/deftmpl column-style "public/css/cell-style.css")
-
-(defn append-cell-style
-  ""
-  [th-td-style
-   style-template]
-  (doseq [[p-name p-value] th-td-style]
-   (swap! style-template
-          replace-single
-          "/**/"
-          (str p-name
-               ": "
-               p-value
-               ";\n/**/"))
-   )
-  @style-template)
-
-(defn- append-column-style
-  ""
-  [style-id
-   selector
-   th-td-style]
-  (if-not (element-exists (str "style#" style-id))
-   (let [replaced-id         (replace-single column-style
-                                                 "style-identification"
-                                                 style-id)
-         replaced-selector   (replace-single replaced-id
-                                                 "selector-placeholder"
-                                                 selector)
-         template-final      (if (map? @th-td-style)
-                              (do (if-not (contains? @th-td-style "width")
-                                   (swap! th-td-style assoc "width" "auto")
-                                   nil)
-                                  (if-not (contains? @th-td-style "text-align")
-                                   (swap! th-td-style assoc "text-align" "center")
-                                   nil)
-                                  (if-not (contains? @th-td-style "text-overflow")
-                                   (swap! th-td-style assoc "text-overflow" "ellipsis")
-                                   nil)
-                                  (if-not (contains? @th-td-style "overflow")
-                                   (swap! th-td-style assoc "overflow" "hidden")
-                                   nil)
-                                  (if-not (contains? @th-td-style "padding")
-                                   (swap! th-td-style assoc "padding" "0 5px")
-                                   nil)
-                               (append-cell-style (into [] @th-td-style)
-                                                  (atom replaced-selector))
-                               )
-                              (append-cell-style [["width"         "auto"]
-                                                  ["text-align"    "center"]
-                                                  ["text-overflow" "ellipsis"]
-                                                  ["overflow"      "hidden"]
-                                                  ["padding"       "0 5px"]]
-                                                 (atom replaced-selector))
-                              )]
-    (append-element "body div.styles" template-final))
-   nil))
-
-(defn- append-td-th-style
-  ""
-  [th-td-style
-   table-class
-   column-index
-   cell-type]
-  (let [style-id   (str table-class
-                        "-"
-                        cell-type
-                        "-"
-                        (inc column-index))
-        selector   (str "."
-                        table-class
-                        " table tr "
-                        cell-type
-                        ":nth-child("
-                        (inc column-index)
-                        ") div")]
-   (append-column-style style-id
-                        selector
-                        (atom th-td-style)))
-  )
-
-(defn- generate-th
-  ""
-  [cell-styles
-   table-node
-   table-class
-   th-index]
-  (if (< th-index (count cell-styles))
-   (let [cell-style     (cell-styles th-index)
-         th-style       (:header cell-style)
-         column-style   (:column cell-style)
-         header-colspan (:colspan cell-style)]
-    (swap! table-node
-           str
-           "<th"
-           (do ; header style
-            (append-td-th-style th-style
-                                table-class
-                                th-index
-                                "th")
-            (if header-colspan
-             (do ; columns style
-                 (if (and column-style
-                          (= (count column-style)
-                             header-colspan))
-                  (let [td-index (atom 0)]
-                   (doseq [td-style column-style]
-                    (append-td-th-style td-style
-                                        table-class
-                                        (+ th-index
-                                           @td-index)
-                                        "td")
-                    (swap! td-index inc @td-index))
-                   )
-                  (doseq [td-index (range 0 header-colspan)]
-                   (append-td-th-style td-index
-                                       table-class
-                                       (+ th-index
-                                          td-index)
-                                       "td"))
-                  )
-                 (str " colspan=" header-colspan " "))
-             (do ; columns style
-                 (append-td-th-style column-style
-                                     table-class
-                                     th-index
-                                     "td")
-                 ""))
-            )
-           "><div"
-           " title=\""
-           (if (:title cell-style)
-            (:title cell-style)
-            (:content cell-style))
-           "\" >"
-           (:content cell-style)
-           "</div></th>")
-    (recur cell-styles table-node table-class (inc th-index))
-    )
-   nil))
-
-(defn- generate-thead
-  "Generate thead for table"
-  [cell-styles
-   table-node
-   table-class]
-  (swap! table-node str "<thead><tr>")
-  (generate-th cell-styles table-node table-class 0)
-  (swap! table-node str "</tr></thead>"))
-
-(defn- generate-tbody
-  "Generate tbody for table"
-  [data-vectors
-   table-node]
-  (swap! table-node str "<tbody>")
-  (doseq [data-vector data-vectors]
-   (swap! table-node str "<tr>")
-    (doseq [data data-vector]
-     (swap! table-node str "<td><div"
-                           " title=\""
-                           (if (map? data)
-                            (str (:title data)
-                                 "\" >"
-                                 (:data data))
-                            (str data
-                                 "\" >"
-                                 data))
-                           "</div></td>"))
-   (swap! table-node str "</tr>"))
-  (swap! table-node str "</tbody>"))
-
-(defn table-with-data
-  "Generate table with data
-  
-  cell-style     Represents vector of maps with attributes
-                  [{:content    \"Name\"
-                    :title      \"Name\"
-                    :header     [[\"width\"      \"100px\"]
-                                 [\"text-align\" \"center\"]]
-                    :column     [[\"width\"      \"100%\"]
-                                 [\"text-align\" \"left\"]]
-                    :colspan    2}]
-  data-vectors   Represents vector of vectors with n elements that represent
-                  values of table columns
-                   example of data format:
-                    [[\"data of column 1 row 1\"
-                      \"data of column 2 row 1\"
-                      {:title \"title of column 3 row 1\"
-                       :data  \"data of column 3 row 1\"}]
-                     [\"data of column 1 row 2\"
-                      \"data of column 2 row 2\"
-                      {:title \"title of column 3 row 2\"
-                       :data  \"data of column 3 row 2\"}]]
-  table-class    Represents class of div that contains table that will be generated"
-  [cell-styles
-   data-vectors
-   table-class]
-  (let [table-node (atom "")]
-   (swap! table-node str "<div class=\""
-                         table-class
-                         "\" ><table>")
-   (generate-thead cell-styles table-node table-class)
-   (generate-tbody data-vectors table-node)
-   (swap! table-node str "</table></div>")
-   @table-node))
-
-(def anim-time 100)
-
 (defn start-please-wait
   "Display please wait message"
   []
@@ -789,17 +612,18 @@
 (defn is-checked?
   ""
   [element]
-  (get-attr element "checked"))
+  (aget element "checked"))
 
 (defn checked-value-with-index
   ""
   [radio-group-elements
    index]
   (if (< index (count radio-group-elements))
-   (if (is-checked? (radio-group-elements index))
-    (get-value (radio-group-elements index))
-    (recur radio-group-elements (inc index))
-    )
+   (let [radio-group-element  (radio-group-elements index)]
+    (if (is-checked? radio-group-element)
+     (get-value radio-group-element)
+     (recur radio-group-elements (inc index))
+     ))
    nil))
 
 (defn checked-value
@@ -808,4 +632,30 @@
   (let [radio-group-elements (query-selector-all (str "input[name='" radio-group-name "']"))]
    (checked-value-with-index radio-group-elements 0))
   )
+
+(defn fade-out-and-fade-in
+  ""
+  [selector
+   anim-duration
+   html-content
+   new-styles
+   remove-styles]
+  (if-not (or (nil? remove-styles)
+              (nil? new-styles)
+              (= @remove-styles
+                 @new-styles))
+   (do (doseq [style-id @remove-styles]
+        (remove-node-from-element "div.styles" (str "#" style-id))
+        )
+       (reset! remove-styles @new-styles)
+       (reset! new-styles (set '())))
+   nil)
+  (fade-out selector
+            anim-duration
+            "fade-out-and-fade-in"
+            true)
+  (timeout #(fade-in selector
+                     html-content
+                     anim-duration)
+           anim-duration))
 

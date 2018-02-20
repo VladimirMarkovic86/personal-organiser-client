@@ -192,13 +192,20 @@ div.please-wait-background {
   opacity: 0.2;
 }
 
-.groceries {
+div.grocery,
+div.groceries {
   margin: 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .groceries table {
-  display: contents;
+  border-spacing: unset;
   font-size: small;
+}
+
+div.grocery h3 {
+  text-align: center;
 }
 
 .groceries table tr td {
@@ -317,13 +324,10 @@ div.please-wait-background {
 
 /* end row hover style */
 
-.groceries a {
+a,
+input[type="button"] {
   cursor: pointer;
 }
-
-
-
-
 
 
 
