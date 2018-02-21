@@ -18,11 +18,9 @@
       :render-in               ".content"
       :animation               md/fade-in
       :animation-duration      anim-time
-      ;:details-conf            ge/grocery-conf
+      :details-conf            ge/grocery-entity
       :edit-conf               ge/grocery-entity
-      ;:delete-conf             ge/delete-grocery-conf
-      :pagination              true
-      :row-number              3
+      :delete-conf             ge/grocery-entity
       :table-class             "groceries"})
 
 (defn grocery-nav-link

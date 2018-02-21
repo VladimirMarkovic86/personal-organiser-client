@@ -212,6 +212,38 @@ div.grocery h3 {
   padding: 2px;
 }
 
+a.current-page {
+  background: linear-gradient(#90B4FE, #5881D8, #90B4FE);
+  border-radius: 15px;
+}
+
+div.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+div.pagination div:nth-child(1) {
+  min-width: 30px;
+}
+
+div.pagination div:nth-child(2) {
+  min-width: 62px;
+}
+
+div.pagination div:nth-child(3),
+div.pagination div:nth-child(4),
+div.pagination div:nth-child(5) {
+  min-width: 27px;
+}
+
+div.pagination div:nth-child(6) {
+  min-width: 32px;
+}
+
+div.pagination div:nth-child(7) {
+  min-width: 27px;
+}
+
 /* begin odd header row style */
 
 .groceries table tr th {
@@ -219,25 +251,25 @@ div.grocery h3 {
   text-align: center;
 }
 
-.groceries table tr:nth-child(2n+1) th {
+.groceries table tr:nth-child(1) th {
   background-color: #91DC47;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-.groceries table tr:nth-child(2n+1) th:first-child {
+.groceries table tr:nth-child(1) th:first-child {
   border-left: 2px solid white;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n+1) th:last-child {
+.groceries table tr:nth-child(1) th:last-child {
   border-right: 2px solid white;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n+1) th:nth-child(2n) {
+.groceries table tr:nth-child(1) th:nth-child(2n) {
   background: linear-gradient(to right, #91DC47, #63B132 30%, #63B132 70%, #91DC47);
 }
 

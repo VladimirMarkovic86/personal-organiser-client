@@ -63,9 +63,12 @@
   ])
 
 (def table-grocery-conf
-     {:entity-type "grocery"
-      :query       {}
-      :projection  columns
-      :qsort       [{:column :gname :direction :asc}
-                    {:column :calories :direction :desc}]})
+     {:entity-type   "grocery"
+      :query         {}
+      :projection    columns
+      :qsort         [{:column :gname :direction :asc}
+                      {:column :calories :direction :desc}]
+      :pagination    true
+      :current-page  0
+      :rows          2})
 
