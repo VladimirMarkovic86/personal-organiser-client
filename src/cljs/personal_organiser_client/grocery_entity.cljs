@@ -39,7 +39,7 @@
   :carbonhydrates
   :water
 ; :description
-; :origin
+ :origin
   ])
 
 (def header-and-cell-styles
@@ -59,7 +59,7 @@
 ; {:content    "Description"
 ;  :header     {"width" "50px"}
 ;  :column     {"width" "50px"}}
-; {:content "Origin"}
+ {:content "Origin"}
   ])
 
 (def table-grocery-conf

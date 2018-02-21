@@ -22,7 +22,7 @@
 (hg/deftmpl column-style "public/css/cell-style.css")
 
 (defn append-cell-style
-  ""
+  "Append particular style to style template"
   [th-td-style
    style-template]
   (doseq [[p-name p-value] th-td-style]
@@ -36,12 +36,14 @@
    )
   @style-template)
 
-(def new-styles (atom (set '())))
+(def new-styles (atom (set '())
+                 ))
 
-(def remove-styles (atom (set '())))
+(def remove-styles (atom (set '())
+                    ))
 
 (defn- append-column-style
-  ""
+  "Generate and append column style"
   [style-id
    selector
    th-td-style]
@@ -83,7 +85,7 @@
    nil))
 
 (defn- append-td-th-style
-  ""
+  "Append td th styles"
   [th-td-style
    table-class
    column-index
@@ -102,11 +104,11 @@
                         ") div")]
    (append-column-style style-id
                         selector
-                        (atom th-td-style)))
-  )
+                        (atom th-td-style))
+   ))
 
 (defn- generate-th
-  ""
+  "Generate th and append style for that th and td column"
   [cell-styles
    table-node
    table-class
@@ -136,7 +138,7 @@
                                         (+ th-index
                                            @td-index)
                                         "td")
-                    (swap! td-index inc @td-index))
+                    (swap! td-index inc))
                    )
                   (doseq [td-index (range 0 header-colspan)]
                    (append-td-th-style td-index
@@ -166,6 +168,7 @@
    nil))
 
 (defn- round-up
+  "Round up result from dividing"
   [number1 number2]
   (if (= 0 (mod number1 number2))
    (int (/ number1 number2))
@@ -174,7 +177,7 @@
   )
 
 (defn generate-pagination
-  ""
+  "Generate pagination row in thead"
   [table-node
    current-page
    number-of-pages
@@ -335,14 +338,8 @@
    (swap! table-node str "</tr>"))
   (swap! table-node str "</tbody>"))
 
-(defn details-entity
-  ""
-  []
-  
-  )
-
 (defn- render-input
-  ""
+  "Render input field"
   [table-str
    data-type
    data
@@ -368,7 +365,7 @@
                        " required>"))
 
 (defn- render-radio
-  ""
+  "Render radio field with different options"
   [table-str
    data
    label
@@ -401,7 +398,7 @@
    ))
 
 (defn- is-cb-checked
-  ""
+  "Query current option if it is checked"
   [selected-cbs
    current-index
    option]
@@ -414,7 +411,7 @@
    ""))
 
 (defn- render-checkbox
-  ""
+  "Render checkbox fields with different options"
   [table-str
    selected-cbs
    label
@@ -444,7 +441,7 @@
    ))
 
 (defn- render-textarea
-  ""
+  "Render textarea field"
   [table-str
    data
    label
@@ -464,7 +461,8 @@
   [xhr]
   (let [response      (ajx/get-response xhr)
         error-message (:error-message response)]
-   (reset! new-styles (set '()))
+   (reset! new-styles (set '())
+    )
    (md/fade-out-and-fade-in ".content"
                             anim-time
                             (str "<div>" error-message "</div>")
@@ -473,7 +471,7 @@
   )
 
 (defn insert-update-entity-success
-  ""
+  "After successful entity insert or update display table again"
   [xhr
    ajax-params]
   (let [table-conf (:conf ajax-params)]
@@ -481,7 +479,7 @@
    ))
 
 (defn insert-update-entity
-  ""
+  "Insert or update entity"
   [[conf]
    sl-node]
   (let [action               (:action conf)
@@ -528,7 +526,7 @@
   )
 
 (defn- generate-form
-  ""
+  "Generate entity form"
   [xhr
    ajax-params]
   (let [response         (ajx/get-response xhr)
@@ -623,7 +621,8 @@
               [(if action-fn-param
                 action-fn-param
                 conf)])
-    (reset! new-styles (set '()))
+    (reset! new-styles (set '())
+     )
     (md/fade-out-and-fade-in ".content"
                              anim-time
                              table-node
@@ -632,7 +631,7 @@
    ))
 
 (defn entity-form
-  ""
+  "Request data about particular entity for display, edit/update"
   [[conf]
    sl-node]
   (let [from-details   (:from-details conf)
@@ -672,7 +671,7 @@
   )
 
 (defn create-entity
-  ""
+  "Call generate-form function with create entity parameters"
   [[conf]]
   (generate-form nil
                 {:conf (assoc conf
@@ -681,7 +680,7 @@
                               :action-fn  insert-update-entity)}))
 
 (defn edit-entity-from-table
-  ""
+  "Call entity-form function from generated entities table with edit entity parameters"
   [[conf]
    sl-node]
   (entity-form [(assoc conf
@@ -692,7 +691,7 @@
   )
 
 (defn edit-entity-from-details
-  ""
+  "Call entity-form function from generated details form with edit entity parameters"
   [[conf]
    sl-node]
   (entity-form [(assoc conf
@@ -704,7 +703,7 @@
   )
 
 (defn entity-details
-  ""
+  "Call entity-form function from generated entities table with details entity parameters"
   [[conf]
    sl-node]
   (entity-form [(assoc conf
@@ -718,14 +717,14 @@
                sl-node
    ))
 
-(defn table-ajax
-  ""
+(defn enitiy-delete-success
+  "Entity delete success"
   [xhr
    ajax-params]
   (table [(:conf ajax-params)]))
 
 (defn entity-delete
-  ""
+  "Request entity to be deleted from server"
   [[conf]
    sl-node]
   (let [entity         (:edit-conf conf)
@@ -738,7 +737,7 @@
    (ajx/uni-ajax-call
     {:url                  delete-entity-url
      :request-method       "DELETE"
-     :success-fn           table-ajax
+     :success-fn           enitiy-delete-success
      :error-fn             uni-error
      :request-header-map
       {(rh/accept)       (mt/text-plain)
@@ -750,7 +749,7 @@
   )
 
 (defn handle-paging
-  ""
+  "Handle click event on pagination link"
   [[conf]
    sl-node]
   (let [pagination  (:pagination conf)
@@ -788,7 +787,7 @@
   )
 
 (defn entity-table-success
-  ""
+  "Generate entity table after retrieving entities"
   [xhr
    ajax-params]    
   (let [table-str               (atom "")
@@ -822,7 +821,6 @@
    (swap! table-str str "<div class=\""
                          table-class
                          "\" ><table>")
-   (.log js/console (empty? entities))
    (if (empty? entities)
     (let [table-node (first (md/parse-html (str "<div class=\""
                                                 table-class
