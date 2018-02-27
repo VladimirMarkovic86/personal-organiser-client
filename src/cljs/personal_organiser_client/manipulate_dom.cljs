@@ -4,6 +4,9 @@
             [personal-organiser-client.http.entity-header  :as eh])
   (:require-macros [personal-organiser-client.html-generator  :as hg]))
 
+; document.getElementById("MyElement").classList.contains('MyClass')
+; document.getElementById("MyElement").classList.toggle('MyClass')
+
 (def anim-time 100)
 
 (defn get-url
@@ -95,7 +98,7 @@
   )
 
 (defn replace-single
-  ""
+  "Replace first occurrence of string in first parameter"
   [str-content
    replace-this
    replace-with]
@@ -178,7 +181,7 @@
    ))
 
 (defn determine-param-type
-  ""
+  "Determine if param is string or html type of object"
   [exec-fn
    param]
   (if (string? param)
@@ -235,7 +238,7 @@
    ))
 
 (defn- remove-fn-from-event
-  ""
+  "Remove particular function from executing after an event has occurred"
   [element
    event-type
    event-function]
@@ -275,7 +278,7 @@
   )
 
 (defn- remove-all-fns-from-event
-  ""
+  "Remove all functions from executing after an event has occurred on particular element"
   [element
    event-type]
   (let [event-funcs      (str event-type "-funcs")]
@@ -288,7 +291,7 @@
    )
 
 (defn remove-all-event
-  ""
+  "Remove all functions from executing after an event has occurred on particular element/s"
   [element
    event-type]
   (let [selected-nodes   (determine-param-type query-selector-all element)]
@@ -353,7 +356,7 @@
    ))
 
 (defn timeout
-  "Delay function execution by miliseconds"
+  "Delay function execution by milliseconds"
   [execute-fn
    delay-time]
   (js/setTimeout execute-fn
@@ -450,8 +453,8 @@
     (append-element "body div.styles" replaced-to))
    nil))
 
-(defn fade-in-iteration
-  ""
+(defn- fade-in-iteration
+  "Set class on element to fade in, and and then append element to selected node"
   [ch-node
    sl-node
    anim-name-class
@@ -476,7 +479,6 @@
 (defn fade-in
   "Fade in html string content in elements fetched by selector during delay time
   
-  
   parameters:
    selector              query document with this selector
    html-content          String or HTMLObject that will be inserted
@@ -488,8 +490,7 @@
    from-opacity          number from 0.0 to 1.0 that will specify starting opacity of
                            fading element
    to-opacity            number from 0.0 to 1.0 that will specify ending opacity of
-                           fading element
-  "
+                           fading element"
   [selector
    html-content
    ^int delay-time
@@ -532,8 +533,7 @@
    from-opacity          number from 0.0 to 1.0 that will specify starting opacity of
                            fading element
    to-opacity            number from 0.0 to 1.0 that will specify ending opacity of
-                           fading element
-  "
+                           fading element"
   [selector
    ^int delay-time
    & [style-identification
@@ -610,12 +610,13 @@
             0))
 
 (defn is-checked?
-  ""
+  "Return value of checked property from html element"
   [element]
   (aget element "checked"))
 
 (defn checked-value-with-index
-  ""
+  "Iterate through html radio elements and check if any of them is checked,
+   if html radio element is checked, return it's value"
   [radio-group-elements
    index]
   (if (< index (count radio-group-elements))
@@ -627,14 +628,14 @@
    nil))
 
 (defn checked-value
-  ""
+  "Query dom for input html radio group by name and find if the choice was made"
   [radio-group-name]
   (let [radio-group-elements (query-selector-all (str "input[name='" radio-group-name "']"))]
    (checked-value-with-index radio-group-elements 0))
   )
 
 (defn fade-out-and-fade-in
-  ""
+  "Automation fade in fade out of an element"
   [selector
    anim-duration
    html-content

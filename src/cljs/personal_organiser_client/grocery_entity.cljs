@@ -1,8 +1,10 @@
 (ns personal-organiser-client.grocery-entity)
 
+(def entity-type "grocery")
+
 (def grocery-entity
-  {:entity-type     "grocery"
-   :entity-id       :gname
+  {:entity-type     entity-type
+   :entity-id       :_id
    :entity-fields   {:gname           {:label      "Name"
                                        :field-type "input"
                                        :data-type  "text"}
@@ -29,7 +31,14 @@
                                        :field-type "radio"
                                        :data-type  "text"
                                        :options    ["All" "Vegetarian"]}}
-    })
+   :fields-order  [:gname
+                   :calories
+                   :fats
+                   :proteins
+                   :carbonhydrates
+                   :water
+                   :description
+                   :origin]})
 
 (def columns
  [:gname
@@ -63,12 +72,11 @@
   ])
 
 (def table-grocery-conf
-     {:entity-type   "grocery"
-      :query         {}
-      :projection    columns
-      :qsort         [{:column :gname :direction :asc}
-                      {:column :calories :direction :desc}]
-      :pagination    true
-      :current-page  0
-      :rows          2})
+     {:entity-type    entity-type
+      :entity-filter  {}
+      :projection     columns
+      :qsort          {:gname 1}
+      :pagination     true
+      :current-page   0
+      :rows           2})
 

@@ -1,6 +1,7 @@
 (ns personal-organiser-client.display-data
   (:require [personal-organiser-client.ajax                :as ajx]
             [personal-organiser-client.manipulate-dom      :as md]
+            [personal-organiser-client.utils               :as utils]
             [personal-organiser-client.http.mime-type      :as mt]
             [personal-organiser-client.http.request-header :as rh]
             [personal-organiser-client.http.entity-header  :as eh]
@@ -167,15 +168,6 @@
     )
    nil))
 
-(defn- round-up
-  "Round up result from dividing"
-  [number1 number2]
-  (if (= 0 (mod number1 number2))
-   (int (/ number1 number2))
-   (inc (int (/ number1 number2))
-    ))
-  )
-
 (defn generate-pagination
   "Generate pagination row in thead"
   [table-node
@@ -265,7 +257,7 @@
         total-row-count   (:total-row-count pagination)
         first-page-index  0
         second-page-index 1
-        number-of-pages   (round-up total-row-count rows)
+        number-of-pages   (utils/round-up total-row-count rows)
         last-page-index   (dec number-of-pages)
         one-before-last   (dec last-page-index)]
    (if (< number-of-pages 4)
@@ -315,17 +307,19 @@
    (swap! table-node str "<tr row=\""
                          (first data-vector)
                          "\" >")
-   (doseq [data data-vector]
-    (swap! table-node str "<td><div"
-                          " title=\""
-                          (if (map? data)
-                           (str (:title data)
-                                "\" >"
-                                (:data data))
-                           (str data
-                                "\" >"
-                                data))
-                          "</div></td>"))
+   (let [data-vector  (utils/remove-index-from-vector data-vector 0)]
+    (doseq [data data-vector]
+     (swap! table-node str "<td><div"
+                           " title=\""
+                           (if (map? data)
+                            (str (:title data)
+                                 "\" >"
+                                 (:data data))
+                            (str data
+                                 "\" >"
+                                 data))
+                           "</div></td>"))
+    )
    (doseq [action actions]
     (swap! table-node str "<td><div"
                           " title=\""
@@ -489,6 +483,9 @@
         entity-keys          (vec (keys entity-fields))
         table-node           (md/query-selector (str "." entity-type))
         request-body         {:entity-type  entity-type}
+        input-element-id     (md/query-selector-on-element table-node
+                                                           "#txt_id")
+        entity-id            (md/get-value input-element-id)
         entity               (atom {})]
    (doseq [e-key entity-keys]
     (let [entity-field   (e-key entity-fields)
@@ -496,7 +493,7 @@
           field-type     (:field-type entity-field)
           data-type      (:data-type entity-field)
           id-prefix      (case field-type
-                          "input"      "txt"
+                          "input"     "txt"
                           "radio"     "r"
                           "checkbox"  "cb"
                           "textarea"  "ta"
@@ -521,7 +518,7 @@
        (eh/content-type) (mt/text-plain)}
      :request-property-map
       {"responseType" (mt/text-plain)}
-     :entity               (assoc request-body :entity @entity)
+     :entity               (assoc request-body :entity @entity :_id entity-id)
      :conf                 conf}))
   )
 
@@ -542,7 +539,7 @@
         edit-conf        (:edit-conf conf)
         entity-type      (:entity-type edit-conf)
         entity-fields    (:entity-fields edit-conf)
-        entity-keys      (vec (keys entity-fields))
+        entity-keys      (:fields-order edit-conf)
         table-str        (atom "")]
    (swap! table-str str "<div class=\""
                         entity-type
@@ -552,6 +549,12 @@
                         " "
                         entity-type
                         "</h3></td></tr>")
+   (swap! table-str str "<tr><td></td><td>"
+                        "<input id=\"txt_id\" name=\"txt_id\" type=\"hidden\""
+                        " value=\""
+                        (:_id entity-data)
+                        "\" >"
+                        "</td><td></td></tr>")
    (doseq [e-key entity-keys]
     (let [field-conf       (e-key entity-fields)
           label            (:label field-conf)
@@ -641,21 +644,17 @@
         entity-id      (:entity-id entity)
         entity-fields  (:entity-fields entity)
         request-body   {:entity-type  entity-type
-                        :query        {entity-id (if from-details
-                                                  (md/get-value
-                                                   (md/query-selector-on-element
-                                                    (md/query-selector
-                                                     (str "."
-                                                          entity-type)
-                                                     )
-                                                    (str "#txt"
-                                                         (:label
-                                                          (entity-id entity-fields))
-                                                     ))
-                                                   )
-                                                  (md/get-attr
-                                                   (md/ancestor sl-node 3)
-                                                   "row"))}}]
+                        :entity-filter  {entity-id (if from-details
+                                                    (md/get-value
+                                                     (md/query-selector-on-element
+                                                      (md/query-selector
+                                                       (str "."
+                                                            entity-type)
+                                                       )
+                                                      "#txt_id"))
+                                                    (md/get-attr
+                                                     (md/ancestor sl-node 3)
+                                                     "row"))}}]
    (ajx/uni-ajax-call
     {:url                  get-entity-url
      :request-method       "POST"
@@ -731,9 +730,9 @@
         entity-type    (:entity-type entity)
         entity-id      (:entity-id entity)
         request-body   {:entity-type  entity-type
-                        :query        {entity-id (md/get-attr
-                                                  (md/ancestor sl-node 3)
-                                                  "row")}}]
+                        :entity-filter  {entity-id (md/get-attr
+                                                   (md/ancestor sl-node 3)
+                                                   "row")}}]
    (ajx/uni-ajax-call
     {:url                  delete-entity-url
      :request-method       "DELETE"
@@ -756,6 +755,7 @@
         conf        (:conf conf)
         page-attr   (md/get-attr sl-node "page")
         table-conf  (:table-conf conf)]
+   (.log js/console page-attr)
    (if (= page-attr "first")
     (table [(assoc conf
                    :table-conf (assoc table-conf
@@ -773,7 +773,7 @@
       (if (= page-attr "last")
        (table [(assoc conf
                       :table-conf (assoc table-conf
-                                         :current-page (dec (round-up
+                                         :current-page (dec (utils/round-up
                                                              (:total-row-count pagination)
                                                              (:rows pagination))
                                                         ))

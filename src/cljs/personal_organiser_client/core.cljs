@@ -20,7 +20,7 @@
   (md/fade-out ".footer" anim-time))
 
 (defn set-cookie
-  ""
+  "Set cookie in browser"
   [cookie-value]
   (aset js/document "cookie" cookie-value))
 
@@ -52,10 +52,6 @@
        (md/add-class password (:password response))
    ))
 
-; if ( document.getElementById("MyElement").classList.contains('MyClass') )
-
-; document.getElementById("MyElement").classList.toggle('MyClass');
-
 (defn read-login-form
   "Read data from login form"
   []
@@ -67,7 +63,7 @@
 (hg/deftmpl login-form "public/html/login/form.html")
 
 (defn redirect-to-login
-  ""
+  "Redirect to login page"
   []
   (md/fade-in "body" login-form anim-time)
   (md/event "#btnLoginId"
