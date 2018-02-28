@@ -74,6 +74,11 @@
   [element]
   (aget element "value"))
 
+(defn get-type
+  "Returns elements type"
+  [element]
+  (aget element "type"))
+
 (defn set-value
   "Sets elements value"
   [element

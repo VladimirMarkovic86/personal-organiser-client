@@ -10,20 +10,20 @@
                                        :data-type  "text"}
                      :calories        {:label      "Calories"
                                        :field-type "input"
-                                       :data-type  "number"}
-                     :fats            {:label      "Fats"
-                                       :field-type "input"
-                                       :data-type  "number"}
+                                       :data-type  "number"
+                                       :step       "0.1"}
                      :proteins        {:label      "Proteins"
+                                       :field-type "input"
+                                       :data-type  "number"
+                                       :step       "0.1"}
+                     :fats            {:label      "Fats"
                                        :field-type "input"
                                        :data-type  "number"
                                        :step       "0.1"}
                      :carbonhydrates  {:label      "Carbonhydrates"
                                        :field-type "input"
-                                       :data-type  "number"}
-                     :water           {:label      "Water"
-                                       :field-type "input"
-                                       :data-type  "number"}
+                                       :data-type  "number"
+                                       :step       "0.1"}
                      :description     {:label      "Description"
                                        :field-type "textarea"
                                        :data-type  "text"}
@@ -33,50 +33,59 @@
                                        :options    ["All" "Vegetarian"]}}
    :fields-order  [:gname
                    :calories
-                   :fats
                    :proteins
+                   :fats
                    :carbonhydrates
-                   :water
                    :description
                    :origin]})
 
 (def columns
  [:gname
   :calories
+  :proteins
   :fats
-; :proteins
   :carbonhydrates
-  :water
 ; :description
- :origin
+  :origin
   ])
+
+(def columns-b
+ [:proteins
+  :description])
 
 (def header-and-cell-styles
  [{:content    "Name"
-   :column     {"text-align" "left"}}
+   :header     {"width"      "200px"}
+   :column     {"width"      "200px"
+                "text-align" "left"}}
   {:content    "Calories"
+   :header     {"width"      "40px"}
+   :column     {"text-align" "right"}}
+  {:content    "Proteins"
+   :header     {"width"      "40px"}
    :column     {"text-align" "right"}}
   {:content    "Fats"
+   :header     {"width"      "40px"}
    :column     {"text-align" "right"}}
-; {:content    "Proteins"}
   {:content    "Carbonhydrates"
-   :header     {"width"      "50px"
-                "text-align" "right"}
-   :column     {"text-align" "right"}}
-  {:content    "Water"
+   :header     {"width"      "40px"}
    :column     {"text-align" "right"}}
 ; {:content    "Description"
 ;  :header     {"width" "50px"}
 ;  :column     {"width" "50px"}}
- {:content "Origin"}
+  {:content    "Origin"
+   :header     {"width"      "40px"}
+   :column     {"width"      "40px"}}
   ])
 
 (def table-grocery-conf
-     {:entity-type    entity-type
+     {:entity-type  entity-type
       :entity-filter  {}
-      :projection     columns
-      :qsort          {:gname 1}
-      :pagination     true
-      :current-page   0
-      :rows           2})
+      :projection  columns
+      :projection-include  true
+      :qsort  {:gname 1}
+      :pagination  true
+      :current-page  0
+      :rows  25
+      :collation {:locale "sr"}})
 

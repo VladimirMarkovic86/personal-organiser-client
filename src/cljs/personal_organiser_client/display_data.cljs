@@ -5,7 +5,8 @@
             [personal-organiser-client.http.mime-type      :as mt]
             [personal-organiser-client.http.request-header :as rh]
             [personal-organiser-client.http.entity-header  :as eh]
-            [cljs.reader                                   :as reader])
+            [cljs.reader                                   :as reader]
+            [clojure.string                                :as cstr])
   (:require-macros [personal-organiser-client.html-generator  :as hg]))
 
 (def get-entities-url "/clojure/get-entities")
@@ -60,6 +61,9 @@
                               (do (if-not (contains? @th-td-style "width")
                                    (swap! th-td-style assoc "width" "auto")
                                    nil)
+                                  (if-not (contains? @th-td-style "white-space")
+                                   (swap! th-td-style assoc "white-space" "nowrap")
+                                   nil)
                                   (if-not (contains? @th-td-style "text-align")
                                    (swap! th-td-style assoc "text-align" "center")
                                    nil)
@@ -76,6 +80,7 @@
                                                   (atom replaced-selector))
                                )
                               (append-cell-style [["width"         "auto"]
+                                                  ["white-space"   "nowrap"]
                                                   ["text-align"    "center"]
                                                   ["text-overflow" "ellipsis"]
                                                   ["overflow"      "hidden"]
@@ -98,7 +103,12 @@
                         (inc column-index))
         selector   (str "."
                         table-class
-                        " table tr "
+                        " table"
+                        " tr"
+                        (if (= cell-type
+                               "th")
+                         ":nth-child(1) "
+                         " ")
                         cell-type
                         ":nth-child("
                         (inc column-index)
@@ -502,8 +512,14 @@
      (case field-type
       "radio"     (swap! entity conj {e-key (md/checked-value element-id)})
       "checkbox"  "cb"
-      (let [input-element  (md/query-selector-on-element table-node (str "#" element-id))]
-       (swap! entity conj {e-key (md/get-value input-element)}))
+      (let [input-element  (md/query-selector-on-element table-node (str "#" element-id))
+            input-element-type  (md/get-type input-element)
+            input-element-value  (md/get-value input-element)
+            input-element-value  (if (= input-element-type
+                                        "number")
+                                  (reader/read-string input-element-value)
+                                  input-element-value)]
+       (swap! entity conj {e-key input-element-value}))
       ))
     )
    (ajx/uni-ajax-call
@@ -755,7 +771,6 @@
         conf        (:conf conf)
         page-attr   (md/get-attr sl-node "page")
         table-conf  (:table-conf conf)]
-   (.log js/console page-attr)
    (if (= page-attr "first")
     (table [(assoc conf
                    :table-conf (assoc table-conf

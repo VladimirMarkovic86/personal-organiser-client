@@ -5,7 +5,7 @@
                    :url "http://www.eclipse.org/legal/epl-v10.html"}
   :source-paths   ["src/clj"]
   :resource-paths ["resources"]
-  :dependencies   [[org.clojure/clojure    "1.8.0"]
+  :dependencies   [[org.clojure/clojure    "1.9.0"]
                     ; https://clojure.org/api/api
                    [org.clojure/clojurescript "1.9.946"]
                     ; https://clojurescript.org/guides/quick-start#clojurescript-compiler
