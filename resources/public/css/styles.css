@@ -49,6 +49,10 @@ div.header nav {
   margin-left: calc(50% - 220px);
 }
 
+div.header nav a {
+    margin-left: 10px;
+}
+
 div.header nav a:hover{
   background: linear-gradient(#91DC47, #63B132, #91DC47);
   border-radius: 15px;
@@ -220,6 +224,10 @@ a.current-page {
 div.pagination {
   display: flex;
   justify-content: center;
+}
+
+div.pagination div{
+  margin-left: 10px;
 }
 
 div.pagination div:nth-child(1) {

@@ -134,9 +134,17 @@
                                    {:itr 0
                                     :insert-on-index index
                                     :insert-element (if (vector? element)
-                                                         element
-                                                         [element])
+                                                        element
+                                                        [element])
                                     :result []}
                                    data-vector)]
    (:result inserted-elements))
   )
+
+(defn read-file
+ "example:
+ file-pathe  public/index.html"
+ [file-path]
+; (clojure.core/slurp	(resource	file-path))
+ )
+

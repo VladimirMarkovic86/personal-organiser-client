@@ -1,8 +1,8 @@
 (ns personal-organiser-client.manipulate-dom
-  (:require [personal-organiser-client.http.mime-type      :as mt]
+  (:require [personal-organiser-client.http.mime-type :as mt]
             [personal-organiser-client.http.request-header :as rh]
-            [personal-organiser-client.http.entity-header  :as eh])
-  (:require-macros [personal-organiser-client.html-generator  :as hg]))
+            [personal-organiser-client.http.entity-header :as eh]
+            [personal-organiser-client.generate-html :refer [gen stl anmtn slctr]]))
 
 ; document.getElementById("MyElement").classList.contains('MyClass')
 ; document.getElementById("MyElement").classList.toggle('MyClass')
@@ -17,7 +17,10 @@
 (defn html?
   ""
   [data]
-  (< -1(.indexOf (aget (type data) "name") "HTML")))
+  (if (not= data
+            nil)
+   (< -1(.indexOf (aget (type data) "name") "HTML"))
+   false))
 
 (defn convert-to-vector
   "Convert html NodeList object to clojure vector"
@@ -193,8 +196,10 @@
    (exec-fn param)
    (if (html? param)
     param
-    []))
-  )
+    (if (vector? param)
+     param
+     []))
+   ))
 
 (defn- add-fn-to-event
   "Add function to event for particular element"
@@ -421,8 +426,6 @@
     (.remove (get-class-list elements) single-class))
    ))
 
-(hg/deftmpl fade-template "public/css/animation/fade-template.css")
-
 (defn element-exists
   "Check if fade in style exists in DOM"
   [selector]
@@ -440,22 +443,21 @@
   (if-not (element-exists (str "style#" style-id))
    (let [delay-time-as-string (str (float (/ delay-time 1000))
                                )
-         replaced-duration    (replace-all fade-template
-                                           "animation-duration"
-                                           delay-time-as-string)
-         replaced-id          (replace-all replaced-duration
-                                           "style-identification"
-                                           style-id)
-         replaced-name-class  (replace-all replaced-id
-                                           "animation-name-class"
-                                           animation-name-class)
-         replaced-from        (replace-all replaced-name-class
-                                           "from-opacity"
-                                           (str from-opacity))
-         replaced-to          (replace-all replaced-from
-                                           "to-opacity"
-                                           (str to-opacity))]
-    (append-element "body div.styles" replaced-to))
+         final-element (gen
+                        (stl
+                         style-id
+                         (anmtn
+                          animation-name-class
+                          {:opacity (str from-opacity)}
+                          {:opacity (str to-opacity)})
+                         (slctr
+                          (str "." animation-name-class)
+                          {:animation (str animation-name-class
+                                           " "
+                                           delay-time-as-string
+                                           "s")}))
+                        "style")]
+    (append-element "body div.styles" final-element))
    nil))
 
 (defn- fade-in-iteration
@@ -476,7 +478,8 @@
                        "div.styles"
                        (replace-all (get-inner-html "div.styles")
                                     "\n"
-                                    "")))
+                                    ""))
+                   )
                  delay-time))
     nil))
   )
@@ -643,19 +646,7 @@
   "Automation fade in fade out of an element"
   [selector
    anim-duration
-   html-content
-   new-styles
-   remove-styles]
-  (if-not (or (nil? remove-styles)
-              (nil? new-styles)
-              (= @remove-styles
-                 @new-styles))
-   (do (doseq [style-id @remove-styles]
-        (remove-node-from-element "div.styles" (str "#" style-id))
-        )
-       (reset! remove-styles @new-styles)
-       (reset! new-styles (set '())))
-   nil)
+   html-content]
   (fade-out selector
             anim-duration
             "fade-out-and-fade-in"
