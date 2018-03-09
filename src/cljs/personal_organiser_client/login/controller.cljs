@@ -10,10 +10,10 @@
 (defn remove-main
  "Remove main page from HTML document"
  []
- (md/fade-out ".header" anim-time)
- (md/fade-out ".sidebar-menu" anim-time)
- (md/fade-out ".content" anim-time)
- (md/fade-out ".footer" anim-time))
+ (md/fade-out ".body"
+              anim-time
+              "body"
+              true))
 
 (defn set-cookie
  "Set cookie in browser"
@@ -39,7 +39,10 @@
  "Login success"
  [xhr
   ajax-params]
- (md/fade-out "table.login" anim-time)
+ (md/fade-out ".body"
+              anim-time
+              "body"
+              true)
  (main-page xhr
             ajax-params))
 
