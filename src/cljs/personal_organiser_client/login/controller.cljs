@@ -1,16 +1,14 @@
 (ns personal-organiser-client.login.controller
  (:require [personal-organiser-client.ajax :refer [ajax get-response]]
            [personal-organiser-client.manipulate-dom :as md]
-           [personal-organiser-client.login.html :as lhtml]
-           [personal-organiser-client.grocery.controller :as gc]
-           [personal-organiser-client.meal.controller :as mc]))
+           [personal-organiser-client.login.html :as lhtml]))
 
 (def anim-time 100)
 
 (def login-url "/clojure/login")
 
 (defn remove-main
- ""
+ "Remove main page from HTML document"
  []
  (md/fade-out ".header" anim-time)
  (md/fade-out ".sidebar-menu" anim-time)
@@ -34,16 +32,7 @@
  [xhr
   {logout-fn :logout-fn}]
  (md/fade-in ".body"
-             (lhtml/template)
-             anim-time)
- (md/fade-in ".header"
-             (lhtml/nav
-              gc/nav-link
-              mc/nav-link
-              logout-fn)
-             anim-time)
- (md/fade-in ".footer"
-             (lhtml/footer)
+             (lhtml/template logout-fn)
              anim-time))
 
 (defn login-success
