@@ -10,12 +10,12 @@
 (def anim-time 100)
 
 (defn get-url
-  ""
+  "Retrieve URL from address bar"
   []
   (aget js/document "URL"))
 
 (defn html?
-  ""
+  "Is data fn parameter HTML element"
   [data]
   (if (not= data
             nil)

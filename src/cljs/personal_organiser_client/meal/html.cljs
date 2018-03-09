@@ -4,7 +4,8 @@
            [personal-organiser-client.meal.entity :refer [table-conf]]))
 
 (defn nav
- ""
+ "Generate ul HTML element
+  that represents navigation menu"
  []
  (gen
   (crt "ul"

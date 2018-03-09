@@ -15,7 +15,8 @@
   )
 
 (defn find-index-to-remove
-  ""
+  "Additional function for remove-index-from-vector fn
+   determine if index and data at that index in vector should be removed"
   [itr
    index-to-remove
    current-index]
@@ -29,7 +30,11 @@
    false))
 
 (defn remove-index-from-vector
-  ""
+  "Remove data at particular index or indexes
+   
+   data-vector is simple vector with elements of any data type
+   index is single number od vector of numbers that represent index/es
+   that should be removed"
   [data-vector
    index]
   (let [removed-index  (reduce (fn [acc
@@ -64,7 +69,12 @@
   )
 
 (defn replace-in-vector-on-index
-  ""
+  "Replace data in vector on particular indexes
+   
+   data-vector is vector with elements of any data type
+   element is single element or vector of elements that are going to replace old data
+   index is single number or vector of numbers that represent positions in data vector
+    where replacement/s will take place"
   [data-vector
    element
    index]
@@ -108,7 +118,13 @@
   )
 
 (defn insert-in-vector-on-index
-  ""
+  "Insert data in vector
+  
+   data-vector is vector with elements of any data type
+   element is single element or vector of elements that are going to be inserted
+    in data vector
+   index is single number or vector of numbers that represent positions in data-vector
+    where element/s will be inserted"
   [data-vector
    element
    index]
