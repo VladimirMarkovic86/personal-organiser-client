@@ -196,27 +196,27 @@ div.please-wait-background {
   opacity: 0.2;
 }
 
-div.grocery,
-div.groceries {
+div.entity,
+div.entities {
   margin: 10px;
   display: flex;
   justify-content: center;
 }
 
-.groceries table {
+.entities table {
   border-spacing: unset;
   font-size: small;
 }
 
-div.grocery h3 {
+div.entity h3 {
   text-align: center;
 }
 
-.groceries table tr td {
+.entities table tr td {
   padding: 2px;
 }
 
-a.current-page {
+div.current-page {
   background: linear-gradient(#90B4FE, #5881D8, #90B4FE);
   border-radius: 15px;
 }
@@ -254,30 +254,30 @@ div.pagination div:nth-child(7) {
 
 /* begin odd header row style */
 
-.groceries table tr th {
+.entities table tr th {
   padding: 0 10px;
   text-align: center;
 }
 
-.groceries table tr:nth-child(1) th {
+.entities table tr:nth-child(1) th {
   background-color: #91DC47;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-.groceries table tr:nth-child(1) th:first-child {
+.entities table tr:nth-child(1) th:first-child {
   border-left: 2px solid white;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-.groceries table tr:nth-child(1) th:last-child {
+.entities table tr:nth-child(1) th:last-child {
   border-right: 2px solid white;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.groceries table tr:nth-child(1) th:nth-child(2n) {
+.entities table tr:nth-child(1) th:nth-child(2n) {
   background: linear-gradient(to right, #91DC47, #63B132 30%, #63B132 70%, #91DC47);
 }
 
@@ -285,25 +285,25 @@ div.pagination div:nth-child(7) {
 
 /* begin odd row style */
 
-.groceries table tr:nth-child(2n+1) td {
+.entities table tr:nth-child(2n+1) td {
   padding: 4px 2px;
 }
 
-.groceries table tr:nth-child(2n+1) td:first-child {
+.entities table tr:nth-child(2n+1) td:first-child {
   padding-left: 4px;
   padding-right: 2px;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n+1) td:last-child {
+.entities table tr:nth-child(2n+1) td:last-child {
   padding-left: 2px;
   padding-right: 4px;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n+1) td:nth-child(2n) {
+.entities table tr:nth-child(2n+1) td:nth-child(2n) {
   background: linear-gradient(to right, #90B4FE, #A5C3FF 30%, #A5C3FF 70%, #90B4FE);
 }
 
@@ -311,25 +311,25 @@ div.pagination div:nth-child(7) {
 
 /* begin even row style */
 
-.groceries table tr:nth-child(2n) td {
+.entities table tr:nth-child(2n) td {
   background-color: #a5c3ff;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-.groceries table tr:nth-child(2n) td:first-child {
+.entities table tr:nth-child(2n) td:first-child {
   border-left: 2px solid white;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n) td:last-child {
+.entities table tr:nth-child(2n) td:last-child {
   border-right: 2px solid white;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.groceries table tr:nth-child(2n) td:nth-child(2n) {
+.entities table tr:nth-child(2n) td:nth-child(2n) {
   background: linear-gradient(to right, #A5C3FF, #90B4FE 30%, #90B4FE 70%, #A5C3FF);
 }
 
@@ -337,28 +337,28 @@ div.pagination div:nth-child(7) {
 
 /* begin row hover style */
 
-.groceries table tr:hover td {
+.entities table tr:hover td {
   background-color: #5881D8;
   padding: 2px;
   border-top: 2px solid white;
   border-bottom: 2px solid white;
 }
 
-.groceries table tr:hover td:first-child {
+.entities table tr:hover td:first-child {
   border-left: 2px solid white;
   padding-left: 2px;
   border-bottom-left-radius: 15px;
   border-top-left-radius: 15px;
 }
 
-.groceries table tr:hover td:last-child {
+.entities table tr:hover td:last-child {
   border-right: 2px solid white;
   padding-right: 2px;
   border-bottom-right-radius: 15px;
   border-top-right-radius: 15px;
 }
 
-.groceries table tr:hover td:nth-child(2n) {
+.entities table tr:hover td:nth-child(2n) {
   background: linear-gradient(to right, #5881D8, #4670C9 30%, #4670C9 70%, #5881D8);
 }
 

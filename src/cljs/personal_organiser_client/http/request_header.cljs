@@ -154,7 +154,7 @@
 	"Proxy-Authorization")
 
 (defn request-range
-	"Range request-header field: Since all HTTP entities are represented in HTTP messages as sequences of bytes, the concept of a byte range is meaningful for any HTTP entity. Byte range specifications in HTTP aply to the secuence of bytes in the entity-body (not necessarily the same as message-body).
+	"Range request-header field: Since all HTTP entities are represented in HTTP messages as sequences of bytes, the concept of a byte range is meaningful for any HTTP entity. Byte range specifications in HTTP aply to the sequence of bytes in the entity-body (not necessarily the same as message-body).
 	
 	example:	0-499
 						    9500-

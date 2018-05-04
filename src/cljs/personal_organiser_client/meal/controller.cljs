@@ -21,6 +21,6 @@
   (md/timeout #(do (md/fade-in ".sidebar-menu"
                                (mhtml/nav)
                                anim-time)
-                   (table [table-conf]))
+                   (table table-conf))
               anim-time))
 

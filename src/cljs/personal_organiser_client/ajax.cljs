@@ -125,19 +125,19 @@
        entity (if (fn? entity)
                (entity entity-fn-params)
                entity)]
-  (aset xhr
-        "onload"
-        #(onload xhr params-map))
-;    (aset xhr "onreadystatechange" onready)
-;    (aset xhr "onprogress" onprogress)
-  (.open xhr
-         request-method
-         url
-         true)
-  (doseq [[k v] request-header-map]
-   (set-request-header xhr [k v]))
-  (doseq [[k v] request-property-map]
-   (set-request-property xhr [k v]))
-  (.send xhr entity))
+   (aset xhr
+         "onload"
+         #(onload xhr params-map))
+ ;    (aset xhr "onreadystatechange" onready)
+ ;    (aset xhr "onprogress" onprogress)
+   (.open xhr
+          request-method
+          url
+          true)
+   (doseq [[k v] request-header-map]
+    (set-request-header xhr [k v]))
+   (doseq [[k v] request-property-map]
+    (set-request-property xhr [k v]))
+   (.send xhr entity)) 
  )
 

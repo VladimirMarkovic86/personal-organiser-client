@@ -14,13 +14,13 @@
                   "Create"
                   {:id "aCreateMealId"}
                   {:onclick {:evt-fn create-entity
-                             :evt-p [table-conf]}}))
+                             :evt-p table-conf}}))
         (crt "li"
              (crt "a"
                   "Show all"
                   {:id "aShowAllMealsId"}
                   {:onclick {:evt-fn table
-                             :evt-p [table-conf]}})
+                             :evt-p table-conf}})
          )]))
  )
                    

@@ -26,7 +26,9 @@
 
 (def field-type-select "select")
 
-(def field-type-form-fill-table "form-fill-table")
+(def sub-form "sub-form")
+
+(def field-type-image "image")
 
 (def anim-time 100)
 
@@ -165,9 +167,8 @@
                              ))
     nil)
    (swap! page-vector conj (crt "div"
-                                (crt "a"
-                                     (inc current-page)
-                                     {:class "current-page"}))
+                                (inc current-page)
+                                {:class "current-page"})
     )
    (if (< (inc current-page) number-of-pages)
     (swap! page-vector conj (crt "div"
@@ -513,6 +514,56 @@
         sl-attrs))
  )
 
+(defn- render-img
+ ""
+ []
+ (let [file-field (md/query-selector "#txtImage")
+       file-field-parent (md/get-parent-node file-field)
+       file (aget (aget file-field "files") 0)
+       img (md/query-selector "#imgImage")
+       fileReader (js/FileReader.)
+       onload (aset fileReader "onload"
+               ((fn [aimg]
+                (fn [e]
+                 (aset aimg "src" (aget (aget e "target") "result"))))
+                  img))
+       dataURL (.readAsDataURL fileReader file)
+       ]))
+
+(defn- image-field
+ ""
+ [data
+  label
+  disabled]
+ [(crt "div"
+       (crt "img"
+            ""
+            {:id (str "img"
+                      label)
+             :name (str "img"
+                        label)
+             :style {:width "100px"
+                     :height "100px"}
+             :src data}))
+  (crt "div"
+       (let [id (str "txt"
+                     label)
+            attrs {:id id
+                   :name id
+                   :type "file"
+                   :required "required"}
+            attrs (if disabled
+                   (assoc attrs
+                          :disabled "disabled")
+                   attrs)]
+       (crt "input"
+            ""
+            attrs
+            {:onchange {:evt-fn render-img}}))
+       )
+  ]
+ )
+
 (defn insert-update-entity-success
   "After successful entity insert or update display table again"
   [xhr
@@ -521,20 +572,24 @@
   (table-fn conf))
 
 (defn insert-update-entity
-  "Insert or update entity"
-  [conf
-   sl-node]
-  (let [action               (:action conf)
-        entity-conf          (:entity-conf conf)
-        entity-type          (:entity-type entity-conf)
-        entity-fields        (:entity-fields entity-conf)
-        entity-keys          (vec (keys entity-fields))
-        table-node           (md/query-selector (str "." entity-type))
-        request-body         {:entity-type  entity-type}
-        input-element-id     (md/query-selector-on-element table-node
-                                                           "#txt_id")
-        entity-id            (md/get-value input-element-id)
-        entity               (atom {})]
+ "Insert or update entity"
+ [conf
+  sl-node]
+ (let [action               (:action conf)
+       entity-conf          (:entity-conf conf)
+       entity-type          (:entity-type entity-conf)
+       entity-fields        (:entity-fields entity-conf)
+       entity-keys          (vec (keys entity-fields))
+       table-node           (md/query-selector (str ".entity"))
+       request-body         {:entity-type  entity-type}
+       input-element-id     (md/query-selector-on-element table-node
+                                                          "#txt_id")
+       entity-id            (md/get-value input-element-id)
+       entity               (atom {})
+       specific-read-form   (:specific-read-form entity-conf)]
+  (if specific-read-form
+   (specific-read-form
+    entity)
    (doseq [e-key entity-keys]
     (let [entity-field   (e-key entity-fields)
           label          (:label entity-field)
@@ -562,66 +617,15 @@
                                   input-element-value)]
        (swap! entity conj {e-key input-element-value}))
       ))
-    )
-   (ajax
-    {:url                  (if (= "Insert" action)
-                            insert-entity-url
-                            update-entity-url)
-     :success-fn           insert-update-entity-success
-     :entity               (assoc request-body :entity @entity :_id entity-id)
-     :conf                 conf}))
-  )
-
-#_(defn- render-form-fill-table
-  ""
-  [table-str
-   data
-   sub-fields
-   sub-fields-order
-   label-no-spaces]
-  (doseq [sf-key sub-fields-order]
-   (let [sub-field  (sf-key sub-fields)
-         field-type  (:field-type sub-field)
-         data-type  (:data-type sub-field)
-         step  (:step sub-field)
-         label  (:label sub-field)
-         label-no-spaces  (md/replace-all label " " "")
-         options  (:options sub-field)
-         disabled  (if (:disabled sub-field)
-                    " disabled=\"disabled\" "
-                    "")
-         data-source  (:data-source sub-field)
-         data-vector  (:data-source sub-field)]
-    (case field-type
-     "input" (render-input table-str
-                                    data-type
-                                    nil
-                                    label-no-spaces
-                                    step
-                                    disabled)
-     "radio"  (render-radio table-str
-                                     nil
-                                     label-no-spaces
-                                     options
-                                     disabled)
-     "checkbox"  (render-checkbox table-str
-                                           nil
-                                           label-no-spaces
-                                           options
-                                           disabled)
-     "textarea"  (render-textarea table-str
-                                           nil
-                                           label-no-spaces
-                                           disabled)
-     "select"  (render-select table-str
-                                       data-type
-                                       data-vector
-                                       label-no-spaces
-                                       disabled)
-     "")
-    )
-   )
-  )
+    ))
+  (ajax
+   {:url                  (if (= "Insert" action)
+                           insert-entity-url
+                           update-entity-url)
+    :success-fn           insert-update-entity-success
+    :entity               (assoc request-body :entity @entity :_id entity-id)
+    :conf                 conf}))
+ )
 
 (defn- generate-form-trs
  ""
@@ -635,7 +639,9 @@
     {entity-type :entity-type
      entity-fields :entity-fields
      entity-keys :fields-order} :entity-conf} :conf}]
- (let [response (get-response xhr)
+ (let [response (if-not (nil? xhr)
+                 (get-response xhr)
+                 nil)
        entity-data (:data response)
        disabled (if (= form-type "Details")
                   true
@@ -660,67 +666,72 @@
   (doseq [e-key entity-keys]
     (let [field-conf       (e-key entity-fields)
           label            (:label field-conf)
-          label-no-spaces  (md/replace-all label " " "")
+          label-no-spaces  (if (string? label)
+                            (md/replace-all label " " "")
+                            "lblDefault")
           field-type       (:field-type field-conf)
           data-type        (:data-type field-conf)
           step             (:step field-conf)
-          sub-fields       (:sub-fields field-conf)
-          sub-fields-order (:sub-fields-order field-conf)
           disabled         (if (:disabled field-conf)
                             (:disabled field-conf)
                             disabled)
           options          (:options field-conf)
-          data             (e-key entity-data)]
-     (swap! trs conj 
-      (crt "tr"
-           [(crt "td"
-                 (crt "label"
-                      label
-                      {:id (str "lbl"
-                                label-no-spaces)
-                       :for (str "txt"
-                                 label-no-spaces)}))
-            
-            (crt "td"
-                 (if (= field-type
-                        field-type-input)
-                  (input-field data-type
-                               data
-                               label-no-spaces
-                               step
-                               disabled)
-                  (if (= field-type
-                         field-type-radio)
-                   (radio-field data
-                                label-no-spaces
-                                options
-                                disabled)
+          data             (e-key entity-data)
+          sub-form-trs (:sub-form-trs field-conf)]
+      (if (= field-type
+             sub-form)
+       (doseq [sub-form-tr (sub-form-trs entity-data disabled)]
+        (swap! trs conj sub-form-tr))
+       (swap! trs conj
+        (crt "tr"
+             [(crt "td"
+                   (crt "label"
+                        label
+                        {:id (str "lbl"
+                                  label-no-spaces)
+                         :for (str "txt"
+                                   label-no-spaces)}))
+              
+              (crt "td"
                    (if (= field-type
-                          field-type-checkbox)
-                    (checkbox-field data
-                                    label-no-spaces
-                                    options
-                                    disabled)
+                          field-type-input)
+                    (input-field data-type
+                                 data
+                                 label-no-spaces
+                                 step
+                                 disabled)
                     (if (= field-type
-                           field-type-textarea)
-                     (textarea-field data
+                           field-type-radio)
+                     (radio-field data
+                                  label-no-spaces
+                                  options
+                                  disabled)
+                     (if (= field-type
+                            field-type-checkbox)
+                      (checkbox-field data
+                                      label-no-spaces
+                                      options
+                                      disabled)
+                      (if (= field-type
+                             field-type-textarea)
+                       (textarea-field data
+                                       label-no-spaces
+                                       disabled)
+                       (if (= field-type
+                              field-type-image)
+                        (image-field data
                                      label-no-spaces
                                      disabled)
-                     #_(if (= field-type
-                            field-type-form-fill-table)
-                      (sub-form-field  data
-                                       sub-fields
-                                       sub-fields-order
-                                       label-no-spaces)
-                      nil))
-                    ))
-                  ))
-            (crt "td"
-                 ""
-                 {:id (str "td"
-                           label)})]
-       ))
-     ))
+                        "")))
+                     ))
+               )
+              (crt "td"
+                   ""
+                   {:id (str "td"
+                             label)})]
+            )))
+      )
+   )
   (swap! trs conj (crt "tr"
                        [(crt "td"
                              (crt "input"
@@ -757,7 +768,7 @@
                               (generate-form-trs
                                xhr
                                ajax-params))
-                         {:class entity-type}))]
+                         {:class "entity"}))]
    (md/fade-out-and-fade-in ".content"
                              anim-time
                              table-node))
@@ -857,7 +868,7 @@
  [xhr
   {conf :conf
    {table-fn :table-fn} :conf}]
- (let [table-class (:table-class conf)
+ (let [table-class (or (:table-class conf) "entities")
        columns-styles (:columns-styles conf)
        response (get-response xhr)
        entities (:data response)

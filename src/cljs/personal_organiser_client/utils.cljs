@@ -14,6 +14,25 @@
     ))
   )
 
+(defn round-decimals
+ ""
+ [number
+  decimals-num]
+ (let [number-i (int number)
+       number-ii (atom (- number
+                          number-i))
+       divider (atom 1)]
+  (doseq [itr (range decimals-num)]
+   (swap! number-ii * 10))
+  (swap! number-ii int)
+  (doseq [itr (range decimals-num)]
+   (swap! divider * 10))
+  (swap! number-ii / @divider)
+  (swap! number-ii double)
+  (+ number-i
+     @number-ii))
+ )
+
 (defn find-index-to-remove
   "Additional function for remove-index-from-vector fn
    determine if index and data at that index in vector should be removed"

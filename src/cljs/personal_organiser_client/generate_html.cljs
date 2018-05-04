@@ -57,9 +57,10 @@
              (number? cont))
       (aset new-element "innerHTML" cont)
       (if (vector? cont)
-       (doseq [cont-element cont]
-        (.appendChild new-element (generate-html cont-element))
-        )
+       (do 
+        (doseq [cont-element cont]
+         (.appendChild new-element (generate-html cont-element))
+         ))
        (if (map? cont)
         (.appendChild new-element (generate-html cont))
         ""))

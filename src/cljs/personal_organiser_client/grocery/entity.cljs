@@ -108,7 +108,7 @@
       :edit true
       :delete true
       :render-in ".content"
-      :table-class "groceries"
+      ;:table-class "entities"
       :table-fn table
       ;:animation md/fade-in
       :animation-duration 100})

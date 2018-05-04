@@ -72,10 +72,45 @@
   [element-class]
   (.getElementsByClassName js/document element-class))
 
-(defn get-value
-  "Returns elements value"
+(defn get-child-nodes
+  "Fetch child nodes of element param"
   [element]
+  (convert-to-vector (aget element "childNodes")))
+
+(defn parse-html
+ "Parses html from string"
+ [html-content]
+ (let [parser                  (js/DOMParser.)
+       html-dom-content        (.parseFromString parser html-content "text/html")
+       html-element            (first (get-child-nodes html-dom-content))
+       head-element            (first (get-child-nodes html-element))
+       body-element            (first (rest (get-child-nodes html-element)))
+       concrete-head-elements  (get-child-nodes head-element)
+       concrete-body-elements  (get-child-nodes body-element)]
+      (if (= (count concrete-body-elements) 0)
+          concrete-head-elements
+          concrete-body-elements))
+ )
+
+(defn determine-param-type
+ "Determine if param is string or html type of object"
+ [exec-fn
+  param]
+ (if (string? param)
+  (exec-fn param)
+  (if (html? param)
+   param
+   (if (vector? param)
+    param
+    []))
+  ))
+
+(defn get-value
+ "Returns elements value"
+ [element]
+ (let [element (determine-param-type query-selector element)]
   (aget element "value"))
+ )
 
 (defn get-type
   "Returns elements type"
@@ -83,15 +118,12 @@
   (aget element "type"))
 
 (defn set-value
-  "Sets elements value"
-  [element
-   new-value]
+ "Sets elements value"
+ [element
+  new-value]
+ (let [element (determine-param-type query-selector element)]
   (aset element "value" new-value))
-
-(defn get-child-nodes
-  "Fetch child nodes of element param"
-  [element]
-  (convert-to-vector (aget element "childNodes")))
+ )
 
 (defn get-parent-node
   "Get parentNode property"
@@ -130,21 +162,6 @@
     @result))
   )
 
-(defn parse-html
-  "Parses html from string"
-  [html-content]
-  (let [parser                  (js/DOMParser.)
-        html-dom-content        (.parseFromString parser html-content "text/html")
-        html-element            (first (get-child-nodes html-dom-content))
-        head-element            (first (get-child-nodes html-element))
-        body-element            (first (rest (get-child-nodes html-element)))
-        concrete-head-elements  (get-child-nodes head-element)
-        concrete-body-elements  (get-child-nodes body-element)]
-       (if (= (count concrete-body-elements) 0)
-           concrete-head-elements
-           concrete-body-elements))
-  )
-
 (defn empty-nodes
   "Empty elements feched by selector"
   [selector]
@@ -158,8 +175,8 @@
 
 (defn get-inner-html
   "Get innerHTML property of first element feched by selector"
-  [selector]
-  (let [sl-node   (query-selector selector)]
+  [element]
+  (let [sl-node   (determine-param-type query-selector element)]
     (aget sl-node "innerHTML"))
   )
 
@@ -188,18 +205,30 @@
     (aset sl-node "outerHTML" html-content))
    ))
 
-(defn determine-param-type
-  "Determine if param is string or html type of object"
-  [exec-fn
-   param]
-  (if (string? param)
-   (exec-fn param)
-   (if (html? param)
-    param
-    (if (vector? param)
-     param
-     []))
-   ))
+; Implement multi select
+
+(defn get-selected-options
+ ""
+ [element]
+ (let [element (determine-param-type query-selector element)
+       slctd-optns (convert-to-vector (aget element "selectedOptions"))
+       slctd-optns-vec (atom [])]
+  (doseq [slctd-optn slctd-optns]
+   (let [sl-attrs (atom {})]
+    (doseq [i (range (aget (aget slctd-optn "attributes") "length"))]
+     (let [attr (aget (aget slctd-optn "attributes") i)
+           ]
+      (swap! sl-attrs conj {(keyword (aget attr "name")) (aget attr "value")}))
+     )
+    (swap! sl-attrs conj {(keyword "label") (aget slctd-optn "innerHTML")})
+    (swap! slctd-optns-vec conj @sl-attrs))
+   )
+  (when (not-empty @slctd-optns-vec)
+   (if (= (count @slctd-optns-vec)
+          1)
+    (first @slctd-optns-vec)
+    @slctd-optns-vec))
+  ))
 
 (defn- add-fn-to-event
   "Add function to event for particular element"
@@ -328,14 +357,17 @@
   "Append html string in elements fetched by selector"
   [selector
    html-content]
-  (let [selected-nodes     (query-selector-all selector)
+  (let [selected-nodes     (determine-param-type query-selector-all selector)
         child-nodes        (determine-param-type parse-html html-content)]
-   (doseq [sl-node selected-nodes]
-    (if (vector? child-nodes)
-     (doseq [ch-node child-nodes]
-      (.appendChild sl-node ch-node))
-     (.appendChild sl-node child-nodes))
-    ))
+   (if (vector? selected-nodes)
+    (doseq [sl-node selected-nodes]
+     (if (vector? child-nodes)
+      (doseq [ch-node child-nodes]
+       (.appendChild sl-node ch-node))
+      (.appendChild sl-node child-nodes))
+     )
+    (.appendChild selected-nodes child-nodes))
+   )
   )
 
 (defn content
@@ -345,7 +377,7 @@
   (empty-nodes selector)
   (append-element selector html-content))
 
-(defn remove-node
+(defn remove-element
   "Remove elements fetched by selector"
   [selector]
   (let [selected-nodes   (query-selector-all selector)]
@@ -353,7 +385,7 @@
     (.removeChild (get-parent-node sl-node) sl-node))
    ))
 
-(defn remove-node-from-element
+(defn remove-element-from-element
   "Remove elements fetched by selector"
   [element
    selector]
