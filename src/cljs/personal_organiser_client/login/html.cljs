@@ -2,7 +2,8 @@
  (:require [personal-organiser-client.generate-html :refer [gen crt]]
            [personal-organiser-client.ajax :refer [ajax get-response]]
            [personal-organiser-client.grocery.controller :as gc :refer [nav-link]]
-           [personal-organiser-client.meal.controller :as mc :refer [nav-link]]))
+           [personal-organiser-client.meal.controller :as mc :refer [nav-link]]
+           [personal-organiser-client.organism.controller :as oc :refer [nav-link]]))
 
 (defn form
  "Generate table HTML element that contains login form"
@@ -89,7 +90,8 @@
             {:id "aPlanishraneId"})
        (crt "a"
             "Organism"
-            {:id "aOrganismId"})
+            {:id "aOrganismId"}
+            {:onclick {:evt-fn oc/nav-link}})
        (crt "a"
             "Log out"
             {:id "aLogoutId"}

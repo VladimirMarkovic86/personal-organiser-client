@@ -36,23 +36,16 @@
  ""
  [th-td
   content]
- (let [default-style {:width "auto"
-                      :white-space "nowrap"
-                      :text-align "center"
-                      :text-overflow "ellipsis"
-                      :overflow "hidden"
-                      :padding "0 5px"}
-       style (if (contains? th-td :style)
-              (conj default-style
-                    (:style th-td))
-              default-style)
-       title (if (contains? th-td :title)
-              (:title th-td)
-              content)]
-  (assoc th-td
-         :style style
-         :title title))
- )
+ (let [default-style (conj
+                      {:width "auto"
+                       :white-space "nowrap"
+                       :text-align "center"
+                       :text-overflow "ellipsis"
+                       :overflow "hidden"
+                       :padding "0 5px"}
+                      th-td)]
+  {:style default-style
+   :title content}))
 
 (defn- generate-ths
   "Generate th and append style for that th and td column"
@@ -62,20 +55,18 @@
    (if (< th-index (count columns-styles))
     (let [column-style (columns-styles th-index)
           content (:content column-style)
-          th (th-td-attrs (:th column-style)
-                          content)
+          header-style (th-td-attrs (:header column-style)
+                                    content)
           attrs (:attrs column-style)]
      (swap! th-vector
             conj
             (crt "th"
                  (crt "div"
                       content
-                      th)
-                 attrs)
-      )
+                      header-style)
+                 attrs))
      (recur columns-styles
-            th-vector)
-     )
+            th-vector))
     @th-vector))
   )
 
@@ -317,7 +308,7 @@
                                 td-index (atom 0)]
                            (doseq [data data-vector]
                             (let [column-style (get columns-styles @td-index)
-                                  td (th-td-attrs (:td column-style)
+                                  td (th-td-attrs (:column column-style)
                                                   data)]
                              (swap! tds conj (crt "td"
                                                   (crt "div"
