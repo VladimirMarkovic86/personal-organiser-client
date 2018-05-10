@@ -1,5 +1,6 @@
 (ns personal-organiser-client.login.html
- (:require [htmlcss-lib.core :refer [gen crt]]
+ (:require [htmlcss-lib.core :refer [gen table tr td label
+                                     input div a nav]]
            [ajax-lib.core :refer [ajax get-response]]
            [personal-organiser-client.grocery.controller :as gc :refer [nav-link]]
            [personal-organiser-client.meal.controller :as mc :refer [nav-link]]
@@ -9,131 +10,107 @@
  "Generate table HTML element that contains login form"
  [login-evt]
  (gen
-  (crt "table"
-       [(crt "tr"
-             [(crt "td"
-               (crt "label"
-                    "email"
-                    {:for "txtEmailId"}))
-              (crt "td"
-                   (crt "input"
-                        ""
-                        {:id "txtEmailId"
-                         :name "txtEmailN"
-                         :type "text"
-                         :required "required"}))]
-         )
-        (crt "tr"
-             [(crt "td"
-                   (crt "label"
-                        "password"
-                        {:for "pswLoginId"}))
-              (crt "td"
-                   (crt "input"
-                        ""
-                        {:id "pswLoginId"
-                         :name "pswLoginN"
-                         :type "password"
-                         :required "required"}))]
-         )
-        (crt "tr"
-             [(crt "td")
-              (crt "td"
-                   (crt "input"
-                        ""
-                        {:id "btnLoginId"
-                         :name "btnLoginN"
-                         :type "button"
-                         :value "Login"}
-                        login-evt))]
-         )
-        (crt "tr"
-             [(crt "td")
-              (crt "td"
-                   [(crt "div"
-                         (crt "a"
-                              "forgot password?"
-                              {:id "forgot-password"}))
-                    (crt "div"
-                         (crt "a"
-                              "register"
-                              {:id "register"}))]
-                   )]
-         )
-        (crt "tr"
-             (crt "td"
-                  ""
-                  {:id "error-msgs"
-                   :colspan "2"}
-                  )
-         )]
+  (table
+   [(tr
+     [(td
+       (label "email"
+              {:for "txtEmailId"}))
+      (td
+       (input ""
+              {:id "txtEmailId"
+               :name "txtEmailN"
+               :type "text"
+               :required "required"}))]
+     )
+    (tr
+     [(td
+       (label "password"
+              {:for "pswLoginId"}))
+      (td
+       (input ""
+              {:id "pswLoginId"
+               :name "pswLoginN"
+               :type "password"
+               :required "required"}))]
+     )
+    (tr
+      [(td)
+       (td
+        (input ""
+               {:id "btnLoginId"
+                :name "btnLoginN"
+                :type "button"
+                :value "Login"}
+               login-evt))]
+     )
+    (tr
+     [(td)
+      (td
+       [(div
+         (a "forgot password?"
+            {:id "forgot-password"}))
+        (div
+         (a "register"
+            {:id "register"}))]
+       )]
+     )
+    (tr
+     (td ""
+         {:id "error-msgs"
+          :colspan "2"})
+     )]
    {:class "login"}))
  )
 
-(defn nav
+(defn nav-fn
  "Header navigation menu"
  [logout-fn]
- (crt "nav"
-      [(crt "a"
-            "Home"
-            {:id "aHomeId"})
-       (crt "a"
-            "Grocery"
-            {:id "aGroceryId"}
-            {:onclick {:evt-fn gc/nav-link}})
-       (crt "a"
-            "Meal"
-            {:id "aMealId"}
-            {:onclick {:evt-fn mc/nav-link}})
-       (crt "a"
-            "Plan ishrane"
-            {:id "aPlanishraneId"})
-       (crt "a"
-            "Organism"
-            {:id "aOrganismId"}
-            {:onclick {:evt-fn oc/nav-link}})
-       (crt "a"
-            "Log out"
-            {:id "aLogoutId"}
-            {:onclick {:evt-fn logout-fn}})
-       ])
+ (nav
+  [(a "Home"
+      {:id "aHomeId"})
+   (a "Grocery"
+      {:id "aGroceryId"}
+      {:onclick {:evt-fn gc/nav-link}})
+   (a "Meal"
+      {:id "aMealId"}
+      {:onclick {:evt-fn mc/nav-link}})
+   (a "Plan ishrane"
+      {:id "aPlanishraneId"})
+   (a "Organism"
+      {:id "aOrganismId"}
+      {:onclick {:evt-fn oc/nav-link}})
+   (a "Log out"
+      {:id "aLogoutId"}
+      {:onclick {:evt-fn logout-fn}})
+   ])
  )
 
 (defn footer
  "Footer of main page"
  []
- [(crt "div"
-       ""
+ [(div ""
        {:class "clj img"})
-  (crt "div"
-       ""
+  (div ""
        {:class "lein img"})
-  (crt "div"
-       ""
+  (div ""
        {:class "drools img"})
-  (crt "div"
-       [(crt "div"
-             "made by Vladimir Marković")
-        (crt "div"
-             "email: markovic.vladimir86@gmail.com")]
-       {:class "made-by"})]
+  (div
+   [(div "made by Vladimir Marković")
+    (div "email: markovic.vladimir86@gmail.com")]
+   {:class "made-by"})]
  )
 
 (defn template
  "Template of main page"
  [logout-fn]
  (gen
-  [(crt "div"
-        (nav logout-fn)
+  [(div (nav-fn logout-fn)
         {:class "header"})
-   (crt "div"
-        ""
+   (div ""
         {:class "sidebar-menu"})
-   (crt "div"
-        ""
+   (div ""
         {:class "content"})
-   (crt "div"
-        (footer)
+   (div (footer)
         {:class "footer"})])
  )
 

@@ -3,17 +3,12 @@
            [js-lib.core :as md]
            [personal-organiser-client.login.html :as lhtml]))
 
-(def anim-time 100)
-
 (def login-url "/clojure/login")
 
 (defn remove-main
  "Remove main page from HTML document"
  []
- (md/fade-out ".body"
-              anim-time
-              "body"
-              true))
+ (md/remove-element-content ".body"))
 
 (defn set-cookie
  "Set cookie in browser"
@@ -31,18 +26,15 @@
  "Open main page"
  [xhr
   {logout-fn :logout-fn}]
- (md/fade-in ".body"
-             (lhtml/template logout-fn)
-             anim-time))
+ (md/append-element ".body"
+                    (lhtml/template logout-fn))
+ )
 
 (defn login-success
  "Login success"
  [xhr
   ajax-params]
- (md/fade-out ".body"
-              anim-time
-              "body"
-              true)
+ (md/remove-element-content ".body")
  (main-page xhr
             ajax-params))
 
@@ -71,27 +63,26 @@
 (defn redirect-to-login
  "Redirect to login page"
  ([logout-fn]
-  (md/fade-in ".body"
-              (lhtml/form
-               {:onclick {:evt-fn ajax
-                          :evt-p {:url login-url
-                                  :success-fn login-success
-                                  :error-fn login-error
-                                  :entity read-login-form
-                                  :logout-fn logout-fn}}
-                })
-              anim-time))
+  (md/append-element ".body"
+                     (lhtml/form
+                      {:onclick {:evt-fn ajax
+                                 :evt-p {:url login-url
+                                         :success-fn login-success
+                                         :error-fn login-error
+                                         :entity read-login-form
+                                         :logout-fn logout-fn}}
+                       }))
+  )
  ([_ {logout-fn :logout-fn}]
-  (md/fade-in ".body"
-              (lhtml/form
-               {:onclick {:evt-fn ajax
-                          :evt-p {:url login-url
-                                  :success-fn login-success
-                                  :error-fn login-error
-                                  :entity read-login-form
-                                  :logout-fn logout-fn}}
-                })
-              anim-time))
+  (md/append-element ".body"
+                     (lhtml/form
+                      {:onclick {:evt-fn ajax
+                                 :evt-p {:url login-url
+                                         :success-fn login-success
+                                         :error-fn login-error
+                                         :entity read-login-form
+                                         :logout-fn logout-fn}}
+                       })))
  )
 
 (defn logout
