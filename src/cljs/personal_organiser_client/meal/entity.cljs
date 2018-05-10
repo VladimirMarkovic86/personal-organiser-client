@@ -1,9 +1,9 @@
 (ns personal-organiser-client.meal.entity
- (:require [personal-organiser-client.ajax :as ajx :refer [ajax get-response]]
-           [personal-organiser-client.generate-html :refer [gen crt]]
-           [personal-organiser-client.manipulate-dom :as md]
-           [personal-organiser-client.display-data :refer [table]]
-           [personal-organiser-client.utils :refer [round-decimals]]
+ (:require [ajax-lib.core :refer [ajax get-response]]
+           [htmlcss-lib.core :refer [gen crt]]
+           [js-lib.core :as md]
+           [framework-lib.core :refer [gen-table]]
+           [utils-lib.core :refer [round-decimals]]
            [cljs.reader :as reader]))
 
 (def entity-type "meal")
@@ -226,7 +226,8 @@
  (swap! entity conj {:carbonhydrates-sum (str (md/get-value "#txtCarbonhydratessum"))})
  (swap! entity conj {:description (str (md/get-value "#taDescription"))})
  (swap! entity conj {:image (aget (md/query-selector "#imgImage") "src")})
- (swap! entity conj {:mtype (str (md/checked-value "rTypeofmeal"))})
+ (swap! entity conj {:mtype (md/cb-checked-values "cbTypeofmeal")})
+ (swap! entity conj {:portion (str (md/checked-value "rPortion"))})
  (let [itr (atom 0)
        ingrediant (atom [])
        ingrediants (atom [])
@@ -250,6 +251,7 @@
    (swap! ingrediants conj @ingrediant)
    (swap! entity conj {:ingrediants @ingrediants})
   )
+ ;(.log js/console (str @entity))
  (str @entity))
 
 (defn- sub-form
@@ -392,45 +394,56 @@
    
    ])
 
-(def form-fields
-  {:entity-type entity-type
-   :entity-id :_id
-   :entity-fields {:mname {:label "Name"
+(def form-conf
+  {:id :_id
+   :type entity-type
+   :fields {:mname {:label "Name"
+                    :field-type "input"
+                    :data-type "text"}
+            :calories-sum {:label "Calories sum"
                            :field-type "input"
+                           :data-type "number"
+                           :step "0.1"
+                           :disabled true}
+            :proteins-sum {:label "Proteins sum"
+                           :field-type "input"
+                           :data-type "number"
+                           :step "0.1"
+                           :disabled true}
+            :fats-sum {:label "Fats sum"
+                       :field-type "input"
+                       :data-type "number"
+                       :step "0.1"
+                       :disabled true}
+            :carbonhydrates-sum {:label "Carbonhydrates sum"
+                                 :field-type "input"
+                                 :data-type "number"
+                                 :step "0.1"
+                                 :disabled true}
+            :description  {:label "Description"
+                           :field-type "textarea"
                            :data-type "text"}
-                   :calories-sum {:label "Calories sum"
-                                  :field-type "input"
-                                  :data-type "number"
-                                  :step "0.1"
-                                  :disabled true}
-                   :proteins-sum {:label "Proteins sum"
-                                  :field-type "input"
-                                  :data-type "number"
-                                  :step "0.1"
-                                  :disabled true}
-                   :fats-sum {:label "Fats sum"
-                              :field-type "input"
-                              :data-type "number"
-                              :step "0.1"
-                              :disabled true}
-                   :carbonhydrates-sum {:label "Carbonhydrates sum"
-                                        :field-type "input"
-                                        :data-type "number"
-                                        :step "0.1"
-                                        :disabled true}
-                   :description  {:label "Description"
-                                  :field-type "textarea"
-                                  :data-type "text"}
-                   :image {:label "Image"
-                           :field-type "image"
-                           :data-type "file"}
-                   :mtype {:label "Type of meal"
-                           :field-type "radio"
-                           :data-type "text"
-                           :options ["Breakfast" "Lunch" "Dinner"]}
-                   :ingredients {:label "Ingrediants"
-                                 :field-type "sub-form"
-                                 :sub-form-trs sub-form}}
+            :image {:label "Image"
+                    :field-type "image"
+                    :data-type "file"}
+            :mtype {:label "Type of meal"
+                    :field-type "checkbox"
+                    :data-type "text"
+                    :options ["Breakfast"
+                              "Lunch"
+                              "Dinner"]}
+            :portion {:label "Portion"
+                       :field-type "radio"
+                       :data-type "text"
+                       :options ["Main course"
+                                 "Sauce"
+                                 "Beverage"
+                                 "Soup"
+                                 "Sweets, Cakes, Compote, Ice cream"
+                                 "Salad"]}
+            :ingredients {:label "Ingrediants"
+                          :field-type "sub-form"
+                          :sub-form-trs sub-form}}
    :fields-order [:mname
                   :calories-sum
                   :proteins-sum
@@ -439,56 +452,81 @@
                   :description
                   :image
                   :mtype
+                  :portion
                   :ingredients]
    :specific-read-form read-form})
 
 (def columns
- [:mname
-  :calories-sum
-  :proteins-sum
-  :fats-sum
-  :carbonhydrates-sum
-; :description
-; :image
-; :mtype
-; :ingredients
-  ])
+ {:projection [:mname
+               :calories-sum
+               :proteins-sum
+               :fats-sum
+               :carbonhydrates-sum
+             ; :description
+             ; :image
+             ; :mtype
+             ; :ingredients
+               ]
+  :style
+   {:mname
+     {:content "Name"
+      :th {:style {:width "200px"}}
+      :td {:style {:width "200px"
+                   :text-align "left"}}
+      }
+    :calories-sum
+     {:content "Cal sum"
+      :th {:style {:width "40px"}
+           :title "Calories sum"}
+      :td {:style {:text-align "right"}}
+      }
+    :proteins-sum
+     {:content "Prot sum"
+      :th {:style {"width"      "40px"}
+           :title "Proteins sum"}
+      :td {:style {"text-align" "right"}}
+      }
+    :fats-sum
+     {:content "Fats sum"
+      :th {:style {:width "40px"}}
+      :td {:style {:text-align "right"}}
+      }
+    :carbonhydrates-sum
+     {:content    "Ch sum"
+      :th {:style {"width" "40px"}
+           :title "Carbonhydrates sum"}
+      :td {:style {:text-align "right"}}
+      }
+    :description
+     {:content    "Desc"
+      :th {:style {"width" "40px"}
+           :title "Description"}
+      :td {:style {:text-align "right"}}
+      }
+    :image
+     {:content    "Img"
+      :th {:style {"width" "40px"}
+           :title "Image"}
+      :td {:style {:text-align "right"}}
+      }
+    :mtype
+     {:content    "M. t"
+      :th {:style {"width" "40px"}
+           :title "Meal type"}
+      :td {:style {:text-align "right"}}
+      }
+    :ingredients
+     {:content    "Ing"
+      :th {:style {"width" "40px"}
+           :title "Ingredients"}
+      :td {:style {:text-align "right"}}
+      }}
+   })
 
-(def columns-styles
- [{:content    "Name"
-   :header     {"width"      "200px"}
-   :column     {"width"      "200px"
-                "text-align" "left"}}
-  {:content    "Calories sum"
-   :header     {"width"      "40px"}
-   :column     {"text-align" "right"}}
-  {:content    "Proteins sum"
-   :header     {"width"      "40px"}
-   :column     {"text-align" "right"}}
-  {:content    "Fats sum"
-   :header     {"width"      "40px"}
-   :column     {"text-align" "right"}}
-  {:content    "Carbonhydrates sum"
-   :header     {"width"      "40px"}
-   :column     {"text-align" "right"}}
-; {:content    "Description"
-;  :header     {"width" "50px"}
-;  :column     {"width" "50px"}}
-; {:content    "Image"
-;  :header     {"width" "50px"}
-;  :column     {"width" "50px"}}
-; {:content    "Meal type"
-;  :header     {"width" "50px"}
-;  :column     {"width" "50px"}}
-; {:content    "Ingredients"
-;  :header     {"width" "50px"}
-;  :column     {"width" "50px"}}
-  ])
-
-(def table-query
+(def query
      {:entity-type  entity-type
       :entity-filter  {}
-      :projection  columns
+      :projection  (:projection columns)
       :projection-include  true
       :qsort  {:mname 1}
       :pagination  true
@@ -497,17 +535,13 @@
       :collation {:locale "sr"}})
 
 (def table-conf
-     {:table-conf table-query
-      :columns-styles columns-styles
-      :entity-conf form-fields
-      :details true
-      :edit true
-      :delete true
+     {:query query
+      :columns columns
+      :form-conf form-conf
+      :actions #{:details :edit :delete}
       :render-in ".content"
-      ;:table-class "entities"
-      :table-fn table
-      ;:animation md/fade-in
-      :animation-duration 100})
+      :table-class "entities"
+      :table-fn gen-table})
 
 ;:mname
 ;:calories-sum

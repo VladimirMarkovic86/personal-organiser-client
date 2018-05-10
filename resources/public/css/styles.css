@@ -139,7 +139,8 @@ input[type="button"]:hover {
   background-color: #63b132;
 }
 
-input[type="radio"] {
+input[type="radio"],
+input[type="checkbox"] {
   width: auto;
 }
 
@@ -192,7 +193,7 @@ div.please-wait-background {
   height: 100%;
   width: 100%;
   z-index: 1;
-  background-color: #fff;
+  background-color: #000;
   opacity: 0.2;
 }
 

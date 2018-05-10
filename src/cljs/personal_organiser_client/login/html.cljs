@@ -1,6 +1,6 @@
 (ns personal-organiser-client.login.html
- (:require [personal-organiser-client.generate-html :refer [gen crt]]
-           [personal-organiser-client.ajax :refer [ajax get-response]]
+ (:require [htmlcss-lib.core :refer [gen crt]]
+           [ajax-lib.core :refer [ajax get-response]]
            [personal-organiser-client.grocery.controller :as gc :refer [nav-link]]
            [personal-organiser-client.meal.controller :as mc :refer [nav-link]]
            [personal-organiser-client.organism.controller :as oc :refer [nav-link]]))

@@ -1,6 +1,6 @@
 (ns personal-organiser-client.login.controller
- (:require [personal-organiser-client.ajax :refer [ajax get-response]]
-           [personal-organiser-client.manipulate-dom :as md]
+ (:require [ajax-lib.core :refer [ajax get-response]]
+           [js-lib.core :as md]
            [personal-organiser-client.login.html :as lhtml]))
 
 (def anim-time 100)
@@ -70,17 +70,29 @@
 
 (defn redirect-to-login
  "Redirect to login page"
- [logout-fn]
- (md/fade-in ".body"
-             (lhtml/form
-              {:onclick {:evt-fn ajax
-                         :evt-p {:url login-url
-                                 :success-fn login-success
-                                 :error-fn login-error
-                                 :entity read-login-form
-                                 :logout-fn logout-fn}}
-               })
-             anim-time))
+ ([logout-fn]
+  (md/fade-in ".body"
+              (lhtml/form
+               {:onclick {:evt-fn ajax
+                          :evt-p {:url login-url
+                                  :success-fn login-success
+                                  :error-fn login-error
+                                  :entity read-login-form
+                                  :logout-fn logout-fn}}
+                })
+              anim-time))
+ ([_ {logout-fn :logout-fn}]
+  (md/fade-in ".body"
+              (lhtml/form
+               {:onclick {:evt-fn ajax
+                          :evt-p {:url login-url
+                                  :success-fn login-success
+                                  :error-fn login-error
+                                  :entity read-login-form
+                                  :logout-fn logout-fn}}
+                })
+              anim-time))
+ )
 
 (defn logout
  "Logout"

@@ -16,6 +16,11 @@
                    ; [enfocus          "2.1.1"]
                     ; https://github.com/ckirkendall/enfocus
                     ; https://github.com/levand/domina
+                   [org.vladimir/ajax-lib "0.1.0"]
+                   [org.vladimir/htmlcss-lib "0.1.0"]
+                   [org.vladimir/js-lib "0.1.0"]
+                   [org.vladimir/framework-lib "0.1.0"]
+                   [org.vladimir/utils-lib "0.1.0"]
                    ]
   
   :plugins [[lein-figwheel  "0.5.14"]

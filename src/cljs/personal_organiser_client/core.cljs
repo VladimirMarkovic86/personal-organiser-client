@@ -1,5 +1,5 @@
 (ns personal-organiser-client.core
- (:require [personal-organiser-client.ajax :refer [ajax]]
+ (:require [ajax-lib.core :refer [ajax]]
            [personal-organiser-client.login.controller :refer [redirect-to-login
                                                                main-page
                                                                logout]]))
@@ -17,4 +17,3 @@
    :logout-fn logout}))
 
 (set! (.-onload js/window) am-i-logged-in)
-

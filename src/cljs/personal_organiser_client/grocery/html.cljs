@@ -1,6 +1,6 @@
 (ns personal-organiser-client.grocery.html
- (:require [personal-organiser-client.generate-html :refer [gen crt]]
-           [personal-organiser-client.display-data :refer [create-entity table]]
+ (:require [htmlcss-lib.core :refer [gen ul li a]]
+           [framework-lib.core :refer [create-entity gen-table]]
            [personal-organiser-client.grocery.entity :refer [table-conf]]))
 
 (defn nav
@@ -8,18 +8,15 @@
   that represents navigation menu"
  []
  (gen
-  (crt "ul"
-       [(crt "li"
-             (crt "a"
-                  "Create"
-                  {:id "aCreateGroceryId"}
-                  {:onclick {:evt-fn create-entity
-                             :evt-p table-conf}}))
-        (crt "li"
-             (crt "a"
-                  "Show all"
-                  {:id "aShowAllGroceriesId"}
-                  {:onclick {:evt-fn table
-                             :evt-p table-conf}})
-         )]))
+  (ul
+   [(li
+     (a "Create"
+        {:id "aCreateGroceryId"}
+        {:onclick {:evt-fn create-entity
+                   :evt-p table-conf}}))
+    (li
+     (a "Show all"
+        {:id "aShowAllGroceriesId"}
+        {:onclick {:evt-fn gen-table
+                   :evt-p table-conf}}))]))
  )
