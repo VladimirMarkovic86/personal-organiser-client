@@ -370,7 +370,27 @@ input[type="button"] {
   cursor: pointer;
 }
 
+.body {
+  height: 100%;
+  display: grid;
+  justify-content: center;
+  align-content: center;
+}
 
+.signUp {
+  border-radius: 15px;
+  border: 5px solid white;
+  padding: 5px;
+  background-color: #90B4FE;
+}
+
+.signUp h3{
+ text-align: center;
+}
+
+.signUp td:nth-child(1){
+ text-align: right;
+}
 
 
 

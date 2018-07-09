@@ -4,19 +4,22 @@
            [personal-organiser-client.grocery.entity :refer [table-conf]]))
 
 (defn nav
- "Generate ul HTML element
-  that represents navigation menu"
- []
- (gen
-  (ul
-   [(li
-     (a "Create"
-        {:id "aCreateGroceryId"}
-        {:onclick {:evt-fn create-entity
-                   :evt-p table-conf}}))
-    (li
-     (a "Show all"
-        {:id "aShowAllGroceriesId"}
-        {:onclick {:evt-fn gen-table
-                   :evt-p table-conf}}))]))
+  "Generate ul HTML element
+   that represents navigation menu"
+  []
+  (gen
+    (ul
+      [(li
+         (a
+           "Create"
+            {:id "aCreateGroceryId"}
+            {:onclick {:evt-fn create-entity
+                       :evt-p table-conf}}))
+       (li
+         (a
+           "Show all"
+           {:id "aShowAllGroceriesId"}
+           {:onclick {:evt-fn gen-table
+                      :evt-p table-conf}}))]
+     ))
  )
