@@ -121,13 +121,14 @@ input, textarea, select {
   border: 2px solid white;
   width: 200px;
   border-radius: 15px;
+  resize: none;
 /*  display: inline-block;*/
 /*  outline: none;*/
 /*  box-shadow: inset 1px 1px 2px #ddd8dc;*/
 }
 
 textarea {
-  padding: 5px;
+  padding: 5px 0px;
 }
 
 input[type="button"] {
