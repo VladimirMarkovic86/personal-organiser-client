@@ -22,12 +22,12 @@
   (let [response (get-response xhr)
         entities (:data response)
         options (atom [])]
-    (doseq [[opt-value
-             opt-label
-             opt-calories
-             opt-proteins
-             opt-fats
-             opt-carbonhydrates] entities]
+    (doseq [{opt-value :_id
+             opt-label :gname
+             opt-calories :calories
+             opt-proteins :proteins
+             opt-fats :fats
+             opt-carbonhydrates :carbonhydrates} entities]
       (swap!
         options
         conj
@@ -637,6 +637,10 @@
       :columns columns
       :form-conf form-conf
       :actions #{:details :edit :delete}
+      :search-on true
+      :search-fields [:mname
+                      :description
+                      :mtype]
       :render-in ".content"
       :table-class "entities"
       :table-fn gen-table})

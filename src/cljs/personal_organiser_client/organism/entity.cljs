@@ -133,6 +133,13 @@
       :columns columns
       :form-conf form-conf
       :actions #{:details :edit :delete}
+      :search-on true
+      :search-fields [:first-name
+                      :last-name
+                      :email
+                      :gender
+                      :diet
+                      :activity]
       :render-in ".content"
       :table-class "entities"
       :table-fn gen-table})

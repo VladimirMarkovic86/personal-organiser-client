@@ -305,72 +305,72 @@
                    ]})
 
 (def columns
- {:projection [:gname
-               :calories
-               :proteins
-               :fats
-               :carbonhydrates
-               ;:description
-               :origin
-               ]
-  :style
-   {:gname
-     {:content "Name"
-      :th {:style {:width "200px"}}
-      :td {:style {:width "200px"
-                   :text-align "left"}}}
-    :calories
-     {:content "Cal"
-      :th {:style {:width "40px"}
-           :title "Calories"}
-      :td {:style {:width "40px"
-                   :text-align "right"}}
-      }
-    :proteins
-     {:content "Prot"
-      :th {:style {:width "40px"}
-           :title "Proteins"}
-      :td {:style {:width "40px"
-                   :text-align "right"}}
-      }
-    :fats
-     {:content "Fats"
-      :th {:style {:width "40px"}
-           :title "Fats"}
-      :td {:style {:width "40px"
-                   :text-align "right"}}
-      }
-    :carbonhydrates
-     {:content "Carbs"
-      :th {:style {:width "40px"}
-           :title "Carbonhydrates"}
-      :td {:style {:width "40px"
-                   :text-align "right"}}
-      }
-    :description
-     {:content "Desc"
-      :th {:style {:width "40px"}
-           :title "Description"}
-      :td {:style {:width "40px"
-                   :text-align "left"}}
-      }
-    :origin
-     {:content "Orig"
-      :th {:style {:width "40px"}
-           :title "Origin"}
-      :td {:style {:width "40px"}}
-      }}
-   })
+     {:projection [:gname
+                   :calories
+                   :proteins
+                   :fats
+                   :carbonhydrates
+                   ;:description
+                   :origin
+                   ]
+      :style
+       {:gname
+         {:content "Name"
+          :th {:style {:width "200px"}}
+          :td {:style {:width "200px"
+                       :text-align "left"}}}
+        :calories
+         {:content "Cal"
+          :th {:style {:width "40px"}
+               :title "Calories"}
+          :td {:style {:width "40px"
+                       :text-align "right"}}
+          }
+        :proteins
+         {:content "Prot"
+          :th {:style {:width "40px"}
+               :title "Proteins"}
+          :td {:style {:width "40px"
+                       :text-align "right"}}
+          }
+        :fats
+         {:content "Fats"
+          :th {:style {:width "40px"}
+               :title "Fats"}
+          :td {:style {:width "40px"
+                       :text-align "right"}}
+          }
+        :carbonhydrates
+         {:content "Carbs"
+          :th {:style {:width "40px"}
+               :title "Carbonhydrates"}
+          :td {:style {:width "40px"
+                       :text-align "right"}}
+          }
+        :description
+         {:content "Desc"
+          :th {:style {:width "40px"}
+               :title "Description"}
+          :td {:style {:width "40px"
+                       :text-align "left"}}
+          }
+        :origin
+         {:content "Orig"
+          :th {:style {:width "40px"}
+               :title "Origin"}
+          :td {:style {:width "40px"}}
+          }}
+       })
 
 (def query
-     {:entity-type  entity-type
-      :entity-filter  {}
-      :projection  (:projection columns)
-      :projection-include  true
-      :qsort  {:gname 1}
-      :pagination  true
-      :current-page  0
-      :rows  25
+     {:entity-type entity-type
+      :entity-filter {}
+      :projection (:projection columns)
+      :projection-include true
+      :qsort {:gname 1}
+      :pagination true
+      :current-page 0
+      :rows 25
       :collation {:locale "sr"}})
 
 (def table-conf
@@ -378,6 +378,8 @@
       :columns columns
       :form-conf form-conf
       :actions #{:details :edit :delete}
+      :search-on true
+      :search-fields [:gname :description :origin]
       :render-in ".content"
       :table-class "entities"
       :table-fn gen-table})
