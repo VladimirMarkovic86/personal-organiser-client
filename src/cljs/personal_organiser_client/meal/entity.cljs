@@ -210,19 +210,19 @@
           quantity-g)
         (let [calories-sum (or (reader/read-string
                                  (md/get-value
-                                   "#txtCaloriessum"))
+                                   "#calories-sum"))
                                0)
               proteins-sum (or (reader/read-string
                                  (md/get-value
-                                   "#txtProteinssum"))
+                                   "#proteins-sum"))
                                0)
               fats-sum (or (reader/read-string
                              (md/get-value
-                               "#txtFatssum"))
+                               "#fats-sum"))
                            0)
               carbonhydrates-sum (or (reader/read-string
                                        (md/get-value
-                                         "#txtCarbonhydratessum"))
+                                         "#carbonhydrates-sum"))
                                      0)
               weight (* (/ grams-g
                            100)
@@ -244,22 +244,22 @@
                                      (:opt-carbonhydrates selected-g))
                                    weight))]
          (md/set-value
-           "#txtCaloriessum"
+           "#calories-sum"
            (round-decimals
              calories
              2))
          (md/set-value
-           "#txtProteinssum"
+           "#proteins-sum"
            (round-decimals
              proteins
              2))
          (md/set-value
-           "#txtFatssum"
+           "#fats-sum"
            (round-decimals
              fats
              2))
          (md/set-value
-           "#txtCarbonhydratessum"
+           "#carbonhydrates-sum"
            (round-decimals
              carbonhydrates
              2))
@@ -279,31 +279,31 @@
     conj
     {:mname (str
               (md/get-value
-                "#txtName"))
+                "#mname"))
      :calories-sum (str
                      (md/get-value
-                       "#txtCaloriessum"))
+                       "#calories-sum"))
      :proteins-sum (str
                      (md/get-value
-                       "#txtProteinssum"))
+                       "#proteins-sum"))
      :fats-sum (str
                  (md/get-value
-                   "#txtFatssum"))
+                   "#fats-sum"))
      :carbonhydrates-sum (str
                            (md/get-value
-                             "#txtCarbonhydratessum"))
+                             "#carbonhydrates-sum"))
      :description (str
                     (md/get-value
-                      "#taDescription"))
+                      "#description"))
      :image (aget
               (md/query-selector
-                "#imgImage")
+                "#image")
               "src")
      :mtype (md/cb-checked-values
-              "cbTypeofmeal")
+              "mtype")
      :portion (str
                 (md/checked-value
-                  "rPortion"))})
+                  "portion"))})
   (let [itr (atom 0)
         ingrediant (atom [])
         ingrediants (atom [])
@@ -367,180 +367,173 @@
 (defn- sub-form
   "Generate ingredients sub form"
   [data
-   disabled]
-  [(tr
-     (td
-       (h4
-         "Ingredients"
-         {:id "lblIngredients"
-          :style {:text-align "center"}})
-       {:colspan 3}))
-   (tr
-     [(td
-        "Grocery")
-      (td
-        (select
-          (option
-            "- Select one -"
-            {:value "-1"})
-          (if disabled
-            {:id "slctGrocery"
-             :disabled "disabled"}
-            {:id "slctGrocery"})
-          {:onfocus {:evt-fn get-options}}))
-      (td)])
-   (tr
-     [(td
-        "Grams")
-      (td
-        (input
-          ""
-          (if disabled
-            {:id "numGrams"
-             :name "numGrams"
-             :type "number"
-             :disabled "disabled"}
-            {:id "numGrams"
-             :name "numGrams"
-             :type "number"}))
-       )
-      (td)])
-   (tr
-     [(td
-        "Quantity")
-      (td
-        (input
-          ""
-          (if disabled
-            {:id "numQuantity"
-             :name "numQuantity"
-             :type "number"
-             :disabled "disabled"}
-            {:id "numQuantity"
-             :name "numQuantity"
-             :type "number"}))
-       )
-      (td)])
-   (tr
-     [(td)
-      (td
-        (input
-          ""
-          (if disabled
-            {:id "btnAddIngredient"
-             :name "btnAddIngredient"
-             :type "button"
-             :value "Add"
-             :disabled "disabled"}
-            {:id "btnAddIngredient"
-             :name "btnAddIngredient"
-             :type "button"
-             :value "Add"})
-          {:onclick {:evt-fn add-ingredient}}))
-      (td)])
-   (if-let [ingrediants (:ingrediants data)]
-     (tr
+   attrs]
+  (let [disabled (:disabled attrs)]
+    [(tr
        (td
-         (div
-           (table
-             [(thead
-                (tr
-                  [(th
-                     "Grocery"
-                     {:style {:width "200px"}})
-                   (th
-                     "Grams"
-                     {:style {:width "40px"}})
-                   (th
-                     "Quantity"
-                     {:style {:width "40px"}})]))
-              (tbody
-                (let [ingrediants-vector (atom [])]
-                  (doseq [[_id gname grams quantity] ingrediants]
-                    (swap!
-                      ingrediants-vector
-                      conj
-                      (tr
-                        [(td
-                           gname
-                           {:value _id})
-                         (td
-                           grams
-                           {:value grams
-                            :style {:text-align "right"}})
-                         (td
-                           quantity
-                           {:value quantity
-                            :style {:text-align "right"}})])
-                     ))
-                 @ingrediants-vector))]
-             {:id "i-table"
-              :style {:border-spacing "initial"}})
-           {:class "entities"})
-         {:id "i-table-placeholder"
-          :colspan 3
-          :style {:width "390px"}}))
-    (tr
-      (td
-        (table
-          (tr
-            (td
-              "No ingredients"))
-          {:style {:margin-left "calc(50% - 60px)"}})
-        {:id "i-table-placeholder"
-         :colspan 3
-         :style {:width "390px"}}))
-    )])
+         (h4
+           "Ingredients"
+           {:id "lblIngredients"
+            :style {:text-align "center"}})
+         {:colspan 3}))
+     (tr
+       [(td
+          "Grocery")
+        (td
+          (select
+            (option
+              "- Select one -"
+              {:value "-1"})
+            (if disabled
+              {:id "slctGrocery"
+               :disabled "disabled"}
+              {:id "slctGrocery"})
+            {:onfocus {:evt-fn get-options}}))
+        (td)])
+     (tr
+       [(td
+          "Grams")
+        (td
+          (input
+            ""
+            (if disabled
+              {:id "numGrams"
+               :name "numGrams"
+               :type "number"
+               :disabled "disabled"}
+              {:id "numGrams"
+               :name "numGrams"
+               :type "number"}))
+         )
+        (td)])
+     (tr
+       [(td
+          "Quantity")
+        (td
+          (input
+            ""
+            (if disabled
+              {:id "numQuantity"
+               :name "numQuantity"
+               :type "number"
+               :disabled "disabled"}
+              {:id "numQuantity"
+               :name "numQuantity"
+               :type "number"}))
+         )
+        (td)])
+     (tr
+       [(td)
+        (td
+          (input
+            ""
+            (if disabled
+              {:id "btnAddIngredient"
+               :name "btnAddIngredient"
+               :type "button"
+               :value "Add"
+               :disabled "disabled"}
+              {:id "btnAddIngredient"
+               :name "btnAddIngredient"
+               :type "button"
+               :value "Add"})
+            {:onclick {:evt-fn add-ingredient}}))
+        (td)])
+     (if-let [ingrediants (:ingrediants data)]
+       (tr
+         (td
+           (div
+             (table
+               [(thead
+                  (tr
+                    [(th
+                       "Grocery"
+                       {:style {:width "200px"}})
+                     (th
+                       "Grams"
+                       {:style {:width "40px"}})
+                     (th
+                       "Quantity"
+                       {:style {:width "40px"}})]))
+                (tbody
+                  (let [ingrediants-vector (atom [])]
+                    (doseq [[_id gname grams quantity] ingrediants]
+                      (swap!
+                        ingrediants-vector
+                        conj
+                        (tr
+                          [(td
+                             gname
+                             {:value _id})
+                           (td
+                             grams
+                             {:value grams
+                              :style {:text-align "right"}})
+                           (td
+                             quantity
+                             {:value quantity
+                              :style {:text-align "right"}})])
+                       ))
+                   @ingrediants-vector))]
+               {:id "i-table"
+                :style {:border-spacing "initial"}})
+             {:class "entities"})
+           {:id "i-table-placeholder"
+            :colspan 3
+            :style {:width "390px"}}))
+      (tr
+        (td
+          (table
+            (tr
+              (td
+                "No ingredients"))
+            {:style {:margin-left "calc(50% - 60px)"}})
+          {:id "i-table-placeholder"
+           :colspan 3
+           :style {:width "390px"}}))
+      )])
+ )
 
 (def form-conf
      {:id :_id
       :type entity-type
       :fields {:mname {:label "Name"
-                       :field-type "input"
-                       :data-type "text"}
+                       :input-el "text"}
                :calories-sum {:label "Calories sum"
-                              :field-type "input"
-                              :data-type "number"
-                              :step "0.1"
-                              :disabled true}
+                              :input-el "number"
+                              :attrs {:step "0.1"
+                                      :disabled true}}
                :proteins-sum {:label "Proteins sum"
-                              :field-type "input"
-                              :data-type "number"
-                              :step "0.1"
-                              :disabled true}
+                              :input-el "number"
+                              :attrs {:step "0.1"
+                                      :disabled true}}
                :fats-sum {:label "Fats sum"
-                          :field-type "input"
-                          :data-type "number"
-                          :step "0.1"
-                          :disabled true}
+                          :input-el "number"
+                          :attrs {:step "0.1"
+                                  :disabled true}}
                :carbonhydrates-sum {:label "Carbonhydrates sum"
-                                    :field-type "input"
-                                    :data-type "number"
-                                    :step "0.1"
-                                    :disabled true}
+                                    :input-el "number"
+                                    :attrs {:step "0.1"
+                                            :disabled true}}
                :description  {:label "Description"
-                              :field-type "textarea"
-                              :data-type "text"}
+                              :input-el "textarea"}
                :image {:label "Image"
-                       :field-type "image"
-                       :data-type "file"}
+                       :input-el "img"}
                :mtype {:label "Type of meal"
-                       :field-type "checkbox"
-                       :data-type "text"
+                       :input-el "checkbox"
                        :options ["Breakfast"
                                  "Lunch"
                                  "Dinner"]}
                :portion {:label "Portion"
-                          :field-type "radio"
-                          :data-type "text"
-                          :options ["Main course"
-                                    "Sauce"
-                                    "Beverage"
-                                    "Soup"
-                                    "Sweets, Cakes, Compote, Ice cream"
-                                    "Salad"]}
+                         :input-el "radio"
+                         :options ["Main course"
+                                   "Sauce"
+                                   "Beverage"
+                                   "Soup"
+                                   "Sweets, Cakes, Compote, Ice cream"
+                                   "Salad"]}
                :ingredients {:label "Ingrediants"
-                             :field-type "sub-form"
+                             :input-el "sub-form"
                              :sub-form-trs sub-form}}
       :fields-order [:mname
                      :calories-sum
@@ -636,7 +629,7 @@
      {:query query
       :columns columns
       :form-conf form-conf
-      :actions #{:details :edit :delete}
+      :actions [:details :edit :delete]
       :search-on true
       :search-fields [:mname
                       :description

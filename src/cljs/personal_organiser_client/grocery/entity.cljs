@@ -264,32 +264,25 @@
 (def form-conf
   {:id       :_id
    :type     entity-type
-   :fields   {:gname           {:label      "Name"
-                                :field-type "input"
-                                :data-type  "text"}
-              :calories        {:label      "Calories"
-                                :field-type "input"
-                                :data-type  "number"
-                                :step       "0.1"}
-              :proteins        {:label      "Proteins"
-                                :field-type "input"
-                                :data-type  "number"
-                                :step       "0.1"}
-              :fats            {:label      "Fats"
-                                :field-type "input"
-                                :data-type  "number"
-                                :step       "0.1"}
-              :carbonhydrates  {:label      "Carbonhydrates"
-                                :field-type "input"
-                                :data-type  "number"
-                                :step       "0.1"}
-              :description     {:label      "Description"
-                                :field-type "textarea"
-                                :data-type  "text"}
-              :origin          {:label      "Origin"
-                                :field-type "radio"
-                                :data-type  "text"
-                                :options    ["All" "Vegetarian"]}
+   :fields   {:gname           {:label "Name"
+                                :input-el "text"}
+              :calories        {:label "Calories"
+                                :input-el "number"
+                                :attrs {:step "0.1"}}
+              :proteins        {:label "Proteins"
+                                :input-el "number"
+                                :attrs {:step "0.1"}}
+              :fats            {:label "Fats"
+                                :input-el "number"
+                                :attrs {:step "0.1"}}
+              :carbonhydrates  {:label "Carbonhydrates"
+                                :input-el "number"
+                                :attrs {:step "0.1"}}
+              :description     {:label "Description"
+                                :input-el "textarea"}
+              :origin          {:label "Origin"
+                                :input-el "radio"
+                                :options ["All" "Vegetarian"]}
               ;:vitmin          {:label "Vitamins and Minerals"
               ;                  :field-type "popup"
               ;                  :popup popup-form}
@@ -377,7 +370,7 @@
      {:query query
       :columns columns
       :form-conf form-conf
-      :actions #{:details :edit :delete}
+      :actions [:details :edit :delete]
       :search-on true
       :search-fields [:gname :description :origin]
       :render-in ".content"
