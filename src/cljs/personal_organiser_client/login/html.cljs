@@ -4,7 +4,9 @@
             [ajax-lib.core :refer [ajax get-response]]
             [personal-organiser-client.grocery.controller :as gc :refer [nav-link]]
             [personal-organiser-client.meal.controller :as mc :refer [nav-link]]
-            [personal-organiser-client.organism.controller :as oc :refer [nav-link]]))
+            [personal-organiser-client.organism.controller :as oc :refer [nav-link]]
+            [personal-organiser-client.language.controller :as lc]
+            [language-lib.core :refer [get-label]]))
 
 (defn form
   "Generate table HTML element that contains login form"
@@ -15,7 +17,7 @@
       [(tr
          [(td
             (label
-              "email"
+              (get-label 14)
               {:for "txtEmailId"}))
           (td
             (input
@@ -28,7 +30,7 @@
        (tr
          [(td
             (label
-              "password"
+              (get-label 15)
               {:for "pswLoginId"}))
           (td
             (input
@@ -41,7 +43,7 @@
        (tr
          [(td
             (label
-              "remember me"
+              (get-label 16)
               {:for "chkRememberMeId"}))
           (td
             (input
@@ -57,14 +59,14 @@
               {:id "btnLoginId"
                :name "btnLoginN"
                :type "button"
-               :value "Login"}
+               :value (get-label 17)}
               login-evt))]
         )
        (tr
          [(td)
           (td
             (a
-              "Sign up"
+              (get-label 18)
               {:id "aSignUpId"
                :style
                  {:float "right"}}
@@ -83,25 +85,29 @@
   [logout-fn]
   (nav
     [(a
-       "Home"
+       (get-label 3)
        {:id "aHomeId"})
      (a
-       "Grocery"
+       (get-label 35)
        {:id "aGroceryId"}
        {:onclick {:evt-fn gc/nav-link}})
      (a
-       "Meal"
+       (get-label 43)
        {:id "aMealId"}
        {:onclick {:evt-fn mc/nav-link}})
      (a
        "Plan ishrane"
        {:id "aPlanishraneId"})
      (a
-       "Organism"
+       (get-label 52)
        {:id "aOrganismId"}
        {:onclick {:evt-fn oc/nav-link}})
      (a
-       "Log out"
+       (get-label 23)
+       {:id "aLanguageId"}
+       {:onclick {:evt-fn lc/nav-link}})
+     (a
+       (get-label 2)
        {:id "aLogoutId"}
        {:onclick {:evt-fn logout-fn}})])
   )

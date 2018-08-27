@@ -1,7 +1,8 @@
 (ns personal-organiser-client.grocery.entity
- (:require [framework-lib.core :refer [gen-table]]
-           [htmlcss-lib.core :refer [gen crt table tr th
-                                     td h1 label input]]))
+  (:require [framework-lib.core :refer [gen-table]]
+            [htmlcss-lib.core :refer [gen crt table tr th
+                                      td h1 label input]]
+            [language-lib.core :refer [get-label]]))
 
 (def entity-type "grocery")
 
@@ -264,28 +265,36 @@
 (def form-conf
   {:id       :_id
    :type     entity-type
-   :fields   {:gname           {:label "Name"
-                                :input-el "text"}
-              :calories        {:label "Calories"
-                                :input-el "number"
-                                :attrs {:step "0.1"}}
-              :proteins        {:label "Proteins"
-                                :input-el "number"
-                                :attrs {:step "0.1"}}
-              :fats            {:label "Fats"
-                                :input-el "number"
-                                :attrs {:step "0.1"}}
-              :carbonhydrates  {:label "Carbonhydrates"
-                                :input-el "number"
-                                :attrs {:step "0.1"}}
-              :description     {:label "Description"
-                                :input-el "textarea"}
-              :origin          {:label "Origin"
-                                :input-el "radio"
-                                :options ["All" "Vegetarian"]}
-              ;:vitmin          {:label "Vitamins and Minerals"
-              ;                  :field-type "popup"
-              ;                  :popup popup-form}
+   :entity-name (get-label 35)
+   :fields   {:gname {:label (get-label 36)
+                      :input-el "text"
+                      :attrs {:required "required"}}
+              :calories {:label (get-label 37)
+                         :input-el "number"
+                         :attrs {:step "0.1"
+                                 :required "required"}}
+              :proteins {:label (get-label 38)
+                         :input-el "number"
+                         :attrs {:step "0.1"
+                                 :required "required"}}
+              :fats {:label (get-label 39)
+                     :input-el "number"
+                     :attrs {:step "0.1"
+                             :required "required"}}
+              :carbonhydrates {:label (get-label 40)
+                               :input-el "number"
+                               :attrs {:step "0.1"
+                                       :required "required"}}
+              :description {:label (get-label 41)
+                            :input-el "textarea"
+                            :attrs {:required "required"}}
+              :origin {:label (get-label 42)
+                       :input-el "radio"
+                       :attrs {:required "required"}
+                       :options ["All" "Vegetarian"]}
+              ;:vitmin {:label "Vitamins and Minerals"
+              ;         :field-type "popup"
+              ;         :popup popup-form}
               }
    :fields-order  [:gname
                    :calories
@@ -308,49 +317,49 @@
                    ]
       :style
        {:gname
-         {:content "Name"
+         {:content (get-label 36)
           :th {:style {:width "200px"}}
           :td {:style {:width "200px"
                        :text-align "left"}}}
         :calories
-         {:content "Cal"
+         {:content (get-label 37)
           :th {:style {:width "40px"}
-               :title "Calories"}
+               :title (get-label 37)}
           :td {:style {:width "40px"
                        :text-align "right"}}
           }
         :proteins
-         {:content "Prot"
+         {:content (get-label 38)
           :th {:style {:width "40px"}
-               :title "Proteins"}
+               :title (get-label 38)}
           :td {:style {:width "40px"
                        :text-align "right"}}
           }
         :fats
-         {:content "Fats"
+         {:content (get-label 39)
           :th {:style {:width "40px"}
-               :title "Fats"}
+               :title (get-label 39)}
           :td {:style {:width "40px"
                        :text-align "right"}}
           }
         :carbonhydrates
-         {:content "Carbs"
+         {:content (get-label 40)
           :th {:style {:width "40px"}
-               :title "Carbonhydrates"}
+               :title (get-label 40)}
           :td {:style {:width "40px"
                        :text-align "right"}}
           }
         :description
-         {:content "Desc"
+         {:content (get-label 41)
           :th {:style {:width "40px"}
-               :title "Description"}
+               :title (get-label 41)}
           :td {:style {:width "40px"
                        :text-align "left"}}
           }
         :origin
-         {:content "Orig"
+         {:content (get-label 42)
           :th {:style {:width "40px"}
-               :title "Origin"}
+               :title (get-label 42)}
           :td {:style {:width "40px"}}
           }}
        })

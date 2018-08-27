@@ -122,6 +122,7 @@ input, textarea, select {
   width: 200px;
   border-radius: 15px;
   resize: none;
+  box-shadow: none;
 /*  display: inline-block;*/
 /*  outline: none;*/
 /*  box-shadow: inset 1px 1px 2px #ddd8dc;*/
@@ -643,3 +644,8 @@ div.angular {
   margin-right: auto;
   width: 250px;
 }
+
+td.validationMessage {
+ color: red;
+}
+

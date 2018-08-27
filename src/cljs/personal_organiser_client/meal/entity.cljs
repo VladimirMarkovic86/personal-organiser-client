@@ -1,11 +1,12 @@
 (ns personal-organiser-client.meal.entity
- (:require [ajax-lib.core :refer [ajax get-response]]
-           [htmlcss-lib.core :refer [gen div input table thead tbody
-                                     tr th td h4 select option]]
-           [js-lib.core :as md]
-           [framework-lib.core :refer [gen-table]]
-           [utils-lib.core :refer [round-decimals]]
-           [cljs.reader :as reader]))
+  (:require [ajax-lib.core :refer [ajax get-response]]
+            [htmlcss-lib.core :refer [gen div input table thead tbody
+                                      tr th td h4 select option]]
+            [js-lib.core :as md]
+            [framework-lib.core :refer [gen-table]]
+            [utils-lib.core :refer [round-decimals]]
+            [cljs.reader :as reader]
+            [language-lib.core :refer [get-label]]))
 
 (def entity-type
      "meal")
@@ -497,42 +498,47 @@
 (def form-conf
      {:id :_id
       :type entity-type
-      :fields {:mname {:label "Name"
-                       :input-el "text"}
-               :calories-sum {:label "Calories sum"
+      :entity-name (get-label 43)
+      :fields {:mname {:label (get-label 36)
+                       :input-el "text"
+                       :attrs {:required "required"}}
+               :calories-sum {:label (get-label 44)
                               :input-el "number"
                               :attrs {:step "0.1"
                                       :disabled true}}
-               :proteins-sum {:label "Proteins sum"
+               :proteins-sum {:label (get-label 45)
                               :input-el "number"
                               :attrs {:step "0.1"
                                       :disabled true}}
-               :fats-sum {:label "Fats sum"
+               :fats-sum {:label (get-label 46)
                           :input-el "number"
                           :attrs {:step "0.1"
                                   :disabled true}}
-               :carbonhydrates-sum {:label "Carbonhydrates sum"
+               :carbonhydrates-sum {:label (get-label 47)
                                     :input-el "number"
                                     :attrs {:step "0.1"
                                             :disabled true}}
-               :description  {:label "Description"
-                              :input-el "textarea"}
-               :image {:label "Image"
+               :description  {:label (get-label 41)
+                              :input-el "textarea"
+                              :attrs {:required "required"}}
+               :image {:label (get-label 48)
                        :input-el "img"}
-               :mtype {:label "Type of meal"
+               :mtype {:label (get-label 49)
                        :input-el "checkbox"
+                       :attrs {:required "required"}
                        :options ["Breakfast"
                                  "Lunch"
                                  "Dinner"]}
-               :portion {:label "Portion"
+               :portion {:label (get-label 50)
                          :input-el "radio"
+                         :attrs {:required "required"}
                          :options ["Main course"
                                    "Sauce"
                                    "Beverage"
                                    "Soup"
                                    "Sweets, Cakes, Compote, Ice cream"
                                    "Salad"]}
-               :ingredients {:label "Ingrediants"
+               :ingredients {:label (get-label 51)
                              :input-el "sub-form"
                              :sub-form-trs sub-form}}
       :fields-order [:mname
@@ -560,56 +566,57 @@
                    ]
       :style
        {:mname
-         {:content "Name"
+         {:content (get-label 36)
           :th {:style {:width "200px"}}
           :td {:style {:width "200px"
                        :text-align "left"}}
           }
         :calories-sum
-         {:content "Cal sum"
+         {:content (get-label 44)
           :th {:style {:width "40px"}
-               :title "Calories sum"}
+               :title (get-label 44)}
           :td {:style {:text-align "right"}}
           }
         :proteins-sum
-         {:content "Prot sum"
-          :th {:style {"width"      "40px"}
-               :title "Proteins sum"}
+         {:content (get-label 45)
+          :th {:style {"width" "40px"}
+               :title (get-label 45)}
           :td {:style {"text-align" "right"}}
           }
         :fats-sum
-         {:content "Fats sum"
-          :th {:style {:width "40px"}}
+         {:content (get-label 46)
+          :th {:style {:width "40px"}
+               :title (get-label 46)}
           :td {:style {:text-align "right"}}
           }
         :carbonhydrates-sum
-         {:content    "Ch sum"
+         {:content (get-label 47)
           :th {:style {"width" "40px"}
-               :title "Carbonhydrates sum"}
+               :title (get-label 47)}
           :td {:style {:text-align "right"}}
           }
         :description
-         {:content    "Desc"
+         {:content (get-label 41)
           :th {:style {"width" "40px"}
-               :title "Description"}
+               :title (get-label 41)}
           :td {:style {:text-align "right"}}
           }
         :image
-         {:content    "Img"
+         {:content (get-label 48)
           :th {:style {"width" "40px"}
-               :title "Image"}
+               :title (get-label 48)}
           :td {:style {:text-align "right"}}
           }
         :mtype
-         {:content    "M. t"
+         {:content (get-label 49)
           :th {:style {"width" "40px"}
-               :title "Meal type"}
+               :title (get-label 49)}
           :td {:style {:text-align "right"}}
           }
         :ingredients
-         {:content    "Ing"
+         {:content (get-label 51)
           :th {:style {"width" "40px"}
-               :title "Ingredients"}
+               :title (get-label 51)}
           :td {:style {:text-align "right"}}
           }}
        })
