@@ -30,7 +30,7 @@ table.login {
   border-radius: 15px;
 }
 
-div.header {
+/*div.header {
   background-color: #91dc47;
   position: absolute;
   top: 0px;
@@ -56,14 +56,79 @@ div.header nav a {
 div.header nav a:hover{
   background: linear-gradient(#91DC47, #63B132, #91DC47);
   border-radius: 15px;
+}*/
+
+.header {
+ height: 30px;
+ width: calc(100% - 10px);
+ top: 0;
+ position: absolute;
+ margin-left: 5px;
+ border-left: 5px solid white;
+ border-bottom: 5px solid white;
+ border-bottom-left-radius: 15px;
+ background-color: #91dc47;
+}
+
+.header a:hover {
+ background: linear-gradient(#91DC47, #63B132, #91DC47);
+}
+
+.header nav,
+.header div.languageDropDownMenuContainer > div {
+ display: grid;
+ cursor: default;
+}
+
+.header nav div.dropDownMenu,
+.header div div.languageDropDownMenu {
+ white-space: pre;
+ text-overflow: ellipsis;
+ width: auto;
+ overflow: hidden;
+ height: 25px;
+ padding-top: 5px;
+ cursor: default;
+}
+
+.header div.dropDownMenuContainer {
+ float: right;
+ width: 200px;
+ height: 30px;
+}
+
+.header div.languageDropDownMenuContainer {
+ float: right;
+ width: 100px;
+ height: 30px;
+ background-color: #91dc47;
+}
+
+.header nav a,
+.header div a {
+ margin-right: 5px;
+ background-color: #91dc47;
+ padding: 3px 3px 3px 5px;
+}
+
+.header div.dropDownMenuContainer a,
+.header div.languageDropDownMenuContainer a {
+ display: none;
+}
+
+.header div.dropDownMenuContainer:hover a,
+.header div.languageDropDownMenuContainer:hover a {
+ display: block;
+ border-left: 5px solid white;
+ z-index: 1;
 }
 
 div.content {
   position: absolute;
-  top: 25px;
+  top: 35px;
   width: 80%;
   background-color: #90B4FE;
-  height: calc(100% - 90px);
+  height: calc(100% - 100px);
   margin-left: 10%;
   overflow: auto;
   border-left: 5px solid white;
@@ -71,19 +136,17 @@ div.content {
 }
 
 div.footer {
-  padding: 5px;
-  background-color: #91dc47;
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  height: 50px;
-  margin: 0 5px;
-  border-left: 5px solid white;
-  border-right: 5px solid white;
-  border-top: 5px solid white;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+ padding: 5px;
+ background-color: #91dc47;
+ position: absolute;
+ bottom: 0px;
+ left: 0px;
+ right: 0px;
+ height: 50px;
+ margin-right: 5px;
+ border-right: 5px solid white;
+ border-top: 5px solid white;
+ border-top-right-radius: 15px;
 }
 
 div.img {
@@ -151,15 +214,15 @@ input[type="checkbox"] {
 }
 
 div.sidebar-menu {
-  position: absolute;
-  top: 25px;
-  right: 90%;
-  max-width: 6.6%;
-  background-color: #63B132;
-  border-left: 5px solid white;
-  border-bottom: 5px solid white;
-  border-bottom-left-radius: 15px;
-  padding: 5px;
+ position: absolute;
+ right: 90%;
+ background-color: #63B132;
+ border-left: 5px solid white;
+ border-top: 5px solid white;
+ border-top-left-radius: 15px;
+ padding: 5px;
+ bottom: 65px;
+ margin-left: 5px;
 }
 
 div.sidebar-menu ul {

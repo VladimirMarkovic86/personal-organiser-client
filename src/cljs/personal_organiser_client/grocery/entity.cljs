@@ -318,49 +318,49 @@
       :style
        {:gname
          {:content (get-label 36)
-          :th {:style {:width "200px"}}
-          :td {:style {:width "200px"
+          :th {:style {:max-width "200px"}}
+          :td {:style {:max-width "200px"
                        :text-align "left"}}}
         :calories
          {:content (get-label 37)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 37)}
-          :td {:style {:width "40px"
+          :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :proteins
          {:content (get-label 38)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 38)}
-          :td {:style {:width "40px"
+          :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :fats
          {:content (get-label 39)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 39)}
-          :td {:style {:width "40px"
+          :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :carbonhydrates
          {:content (get-label 40)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 40)}
-          :td {:style {:width "40px"
+          :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :description
          {:content (get-label 41)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 41)}
-          :td {:style {:width "40px"
+          :td {:style {:max-width "40px"
                        :text-align "left"}}
           }
         :origin
          {:content (get-label 42)
-          :th {:style {:width "40px"}
+          :th {:style {:max-width "40px"}
                :title (get-label 42)}
-          :td {:style {:width "40px"}}
+          :td {:style {:max-width "40px"}}
           }}
        })
 
