@@ -2,7 +2,8 @@
   (:require [framework-lib.core :refer [gen-table]]
             [htmlcss-lib.core :refer [gen crt table tr th
                                       td h1 label input]]
-            [language-lib.core :refer [get-label]]))
+            [language-lib.core :refer [get-label]]
+            [common-client.allowed-actions.controller :refer [allowed-actions]]))
 
 (def entity-type "grocery")
 
@@ -265,30 +266,30 @@
 (def form-conf
   {:id       :_id
    :type     entity-type
-   :entity-name (get-label 35)
-   :fields   {:gname {:label (get-label 36)
+   :entity-name (get-label 1009)
+   :fields   {:gname {:label (get-label 1010)
                       :input-el "text"
                       :attrs {:required "required"}}
-              :calories {:label (get-label 37)
+              :calories {:label (get-label 1011)
                          :input-el "number"
                          :attrs {:step "0.1"
                                  :required "required"}}
-              :proteins {:label (get-label 38)
+              :proteins {:label (get-label 1012)
                          :input-el "number"
                          :attrs {:step "0.1"
                                  :required "required"}}
-              :fats {:label (get-label 39)
+              :fats {:label (get-label 1013)
                      :input-el "number"
                      :attrs {:step "0.1"
                              :required "required"}}
-              :carbonhydrates {:label (get-label 40)
+              :carbonhydrates {:label (get-label 1014)
                                :input-el "number"
                                :attrs {:step "0.1"
                                        :required "required"}}
-              :description {:label (get-label 41)
+              :description {:label (get-label 1015)
                             :input-el "textarea"
                             :attrs {:required "required"}}
-              :origin {:label (get-label 42)
+              :origin {:label (get-label 1016)
                        :input-el "radio"
                        :attrs {:required "required"}
                        :options ["All" "Vegetarian"]}
@@ -317,47 +318,47 @@
                    ]
       :style
        {:gname
-         {:content (get-label 36)
+         {:content (get-label 1010)
           :th {:style {:max-width "200px"}}
           :td {:style {:max-width "200px"
                        :text-align "left"}}}
         :calories
-         {:content (get-label 37)
+         {:content (get-label 1011)
           :th {:style {:max-width "40px"}
                :title (get-label 37)}
           :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :proteins
-         {:content (get-label 38)
+         {:content (get-label 1012)
           :th {:style {:max-width "40px"}
                :title (get-label 38)}
           :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :fats
-         {:content (get-label 39)
+         {:content (get-label 1013)
           :th {:style {:max-width "40px"}
                :title (get-label 39)}
           :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :carbonhydrates
-         {:content (get-label 40)
+         {:content (get-label 1014)
           :th {:style {:max-width "40px"}
                :title (get-label 40)}
           :td {:style {:max-width "40px"
                        :text-align "right"}}
           }
         :description
-         {:content (get-label 41)
+         {:content (get-label 1015)
           :th {:style {:max-width "40px"}
                :title (get-label 41)}
           :td {:style {:max-width "40px"
                        :text-align "left"}}
           }
         :origin
-         {:content (get-label 42)
+         {:content (get-label 1016)
           :th {:style {:max-width "40px"}
                :title (get-label 42)}
           :td {:style {:max-width "40px"}}
@@ -375,14 +376,17 @@
       :rows 25
       :collation {:locale "sr"}})
 
-(def table-conf
-     {:query query
-      :columns columns
-      :form-conf form-conf
-      :actions [:details :edit :delete]
-      :search-on true
-      :search-fields [:gname :description :origin]
-      :render-in ".content"
-      :table-class "entities"
-      :table-fn gen-table})
+(defn table-conf-fn
+  ""
+  []
+  {:query query
+   :columns columns
+   :form-conf form-conf
+   :actions [:details :edit :delete]
+   :allowed-actions @allowed-actions
+   :search-on true
+   :search-fields [:gname :description :origin]
+   :render-in ".content"
+   :table-class "entities"
+   :table-fn gen-table})
 
