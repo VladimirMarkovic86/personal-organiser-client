@@ -263,125 +263,131 @@
           (td)])]
       ))
 
-(def form-conf
-  {:id       :_id
-   :type     entity-type
+(defn form-conf-fn
+  ""
+  []
+  {:id :_id
+   :type entity-type
    :entity-name (get-label 1009)
-   :fields   {:gname {:label (get-label 1010)
-                      :input-el "text"
-                      :attrs {:required "required"}}
-              :calories {:label (get-label 1011)
-                         :input-el "number"
-                         :attrs {:step "0.1"
-                                 :required "required"}}
-              :proteins {:label (get-label 1012)
-                         :input-el "number"
-                         :attrs {:step "0.1"
-                                 :required "required"}}
-              :fats {:label (get-label 1013)
-                     :input-el "number"
-                     :attrs {:step "0.1"
-                             :required "required"}}
-              :carbonhydrates {:label (get-label 1014)
-                               :input-el "number"
-                               :attrs {:step "0.1"
-                                       :required "required"}}
-              :description {:label (get-label 1015)
-                            :input-el "textarea"
-                            :attrs {:required "required"}}
-              :origin {:label (get-label 1016)
-                       :input-el "radio"
-                       :attrs {:required "required"}
-                       :options ["All" "Vegetarian"]}
-              ;:vitmin {:label "Vitamins and Minerals"
-              ;         :field-type "popup"
-              ;         :popup popup-form}
-              }
-   :fields-order  [:gname
-                   :calories
-                   :proteins
-                   :fats
-                   :carbonhydrates
-                   :description
-                   :origin
-                   ;:vitmin
-                   ]})
+   :fields {:gname {:label (get-label 1010)
+                    :input-el "text"
+                    :attrs {:required "required"}}
+            :calories {:label (get-label 1011)
+                       :input-el "number"
+                       :attrs {:step "0.1"
+                               :required "required"}}
+            :proteins {:label (get-label 1012)
+                       :input-el "number"
+                       :attrs {:step "0.1"
+                               :required "required"}}
+            :fats {:label (get-label 1013)
+                   :input-el "number"
+                   :attrs {:step "0.1"
+                           :required "required"}}
+            :carbonhydrates {:label (get-label 1014)
+                             :input-el "number"
+                             :attrs {:step "0.1"
+                                     :required "required"}}
+            :description {:label (get-label 1015)
+                          :input-el "textarea"
+                          :attrs {:required "required"}}
+            :origin {:label (get-label 1016)
+                     :input-el "radio"
+                     :attrs {:required "required"}
+                     :options ["All" "Vegetarian"]}
+            ;:vitmin {:label "Vitamins and Minerals"
+            ;         :field-type "popup"
+            ;         :popup popup-form}
+            }
+   :fields-order [:gname
+                  :calories
+                  :proteins
+                  :fats
+                  :carbonhydrates
+                  :description
+                  :origin
+                  ;:vitmin
+                  ]})
 
-(def columns
-     {:projection [:gname
-                   :calories
-                   :proteins
-                   :fats
-                   :carbonhydrates
-                   ;:description
-                   :origin
-                   ]
-      :style
-       {:gname
-         {:content (get-label 1010)
-          :th {:style {:max-width "200px"}}
-          :td {:style {:max-width "200px"
-                       :text-align "left"}}}
-        :calories
-         {:content (get-label 1011)
-          :th {:style {:max-width "40px"}
-               :title (get-label 37)}
-          :td {:style {:max-width "40px"
-                       :text-align "right"}}
-          }
-        :proteins
-         {:content (get-label 1012)
-          :th {:style {:max-width "40px"}
-               :title (get-label 38)}
-          :td {:style {:max-width "40px"
-                       :text-align "right"}}
-          }
-        :fats
-         {:content (get-label 1013)
-          :th {:style {:max-width "40px"}
-               :title (get-label 39)}
-          :td {:style {:max-width "40px"
-                       :text-align "right"}}
-          }
-        :carbonhydrates
-         {:content (get-label 1014)
-          :th {:style {:max-width "40px"}
-               :title (get-label 40)}
-          :td {:style {:max-width "40px"
-                       :text-align "right"}}
-          }
-        :description
-         {:content (get-label 1015)
-          :th {:style {:max-width "40px"}
-               :title (get-label 41)}
-          :td {:style {:max-width "40px"
-                       :text-align "left"}}
-          }
-        :origin
-         {:content (get-label 1016)
-          :th {:style {:max-width "40px"}
-               :title (get-label 42)}
-          :td {:style {:max-width "40px"}}
-          }}
-       })
+(defn columns-fn
+  ""
+  []
+  {:projection [:gname
+                :calories
+                :proteins
+                :fats
+                :carbonhydrates
+                ;:description
+                :origin
+                ]
+   :style
+    {:gname
+      {:content (get-label 1010)
+       :th {:style {:max-width "200px"}}
+       :td {:style {:max-width "200px"
+                    :text-align "left"}}}
+     :calories
+      {:content (get-label 1011)
+       :th {:style {:max-width "40px"}
+            :title (get-label 37)}
+       :td {:style {:max-width "40px"
+                    :text-align "right"}}
+       }
+     :proteins
+      {:content (get-label 1012)
+       :th {:style {:max-width "40px"}
+            :title (get-label 38)}
+       :td {:style {:max-width "40px"
+                    :text-align "right"}}
+       }
+     :fats
+      {:content (get-label 1013)
+       :th {:style {:max-width "40px"}
+            :title (get-label 39)}
+       :td {:style {:max-width "40px"
+                    :text-align "right"}}
+       }
+     :carbonhydrates
+      {:content (get-label 1014)
+       :th {:style {:max-width "40px"}
+            :title (get-label 40)}
+       :td {:style {:max-width "40px"
+                    :text-align "right"}}
+       }
+     :description
+      {:content (get-label 1015)
+       :th {:style {:max-width "40px"}
+            :title (get-label 41)}
+       :td {:style {:max-width "40px"
+                    :text-align "left"}}
+       }
+     :origin
+      {:content (get-label 1016)
+       :th {:style {:max-width "40px"}
+            :title (get-label 42)}
+       :td {:style {:max-width "40px"}}
+       }}
+    })
 
-(def query
-     {:entity-type entity-type
-      :entity-filter {}
-      :projection (:projection columns)
-      :projection-include true
-      :qsort {:gname 1}
-      :pagination true
-      :current-page 0
-      :rows 25
-      :collation {:locale "sr"}})
+(defn query-fn
+  ""
+  []
+  {:entity-type entity-type
+   :entity-filter {}
+   :projection (:projection (columns-fn))
+   :projection-include true
+   :qsort {:gname 1}
+   :pagination true
+   :current-page 0
+   :rows 25
+   :collation {:locale "sr"}})
 
 (defn table-conf-fn
   ""
   []
-  {:query query
-   :columns columns
-   :form-conf form-conf
+  {:query (query-fn)
+   :columns (columns-fn)
+   :form-conf (form-conf-fn)
    :actions [:details :edit :delete]
    :allowed-actions @allowed-actions
    :search-on true

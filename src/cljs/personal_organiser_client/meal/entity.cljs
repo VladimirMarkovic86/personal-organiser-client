@@ -7,6 +7,7 @@
             [utils-lib.core :refer [round-decimals]]
             [cljs.reader :as reader]
             [language-lib.core :refer [get-label]]
+            [common-middle.request-urls :as rurls]
             [common-client.allowed-actions.controller :refer [allowed-actions]]))
 
 (def entity-type
@@ -14,9 +15,6 @@
 
 (def entity-sub-type
      "grocery")
-
-(def get-entities-url
-     "/clojure/get-entities")
 
 (defn- populate-select
   "Generate options for select HTML element"
@@ -68,7 +66,7 @@
   ""
   []
   (ajax
-    {:url get-entities-url
+    {:url rurls/get-entities-url
      :success-fn populate-select
      :entity select-conf}))
 
@@ -496,149 +494,155 @@
       )])
  )
 
-(def form-conf
-     {:id :_id
-      :type entity-type
-      :entity-name (get-label 1017)
-      :fields {:mname {:label (get-label 1010)
-                       :input-el "text"
-                       :attrs {:required "required"}}
-               :calories-sum {:label (get-label 1018)
-                              :input-el "number"
-                              :attrs {:step "0.1"
-                                      :disabled true}}
-               :proteins-sum {:label (get-label 1019)
-                              :input-el "number"
-                              :attrs {:step "0.1"
-                                      :disabled true}}
-               :fats-sum {:label (get-label 1020)
-                          :input-el "number"
-                          :attrs {:step "0.1"
-                                  :disabled true}}
-               :carbonhydrates-sum {:label (get-label 1021)
-                                    :input-el "number"
-                                    :attrs {:step "0.1"
-                                            :disabled true}}
-               :description  {:label (get-label 1015)
-                              :input-el "textarea"
-                              :attrs {:required "required"}}
-               :image {:label (get-label 1022)
-                       :input-el "img"}
-               :mtype {:label (get-label 1023)
-                       :input-el "checkbox"
-                       :attrs {:required "required"}
-                       :options ["Breakfast"
-                                 "Lunch"
-                                 "Dinner"]}
-               :portion {:label (get-label 1024)
-                         :input-el "radio"
-                         :attrs {:required "required"}
-                         :options ["Main course"
-                                   "Sauce"
-                                   "Beverage"
-                                   "Soup"
-                                   "Sweets, Cakes, Compote, Ice cream"
-                                   "Salad"]}
-               :ingredients {:label (get-label 1025)
-                             :input-el "sub-form"
-                             :sub-form-trs sub-form}}
-      :fields-order [:mname
-                     :calories-sum
-                     :proteins-sum
-                     :fats-sum
-                     :carbonhydrates-sum
-                     :description
-                     :image
-                     :mtype
-                     :portion
-                     :ingredients]
-      :specific-read-form read-form})
+(defn form-conf-fn
+  ""
+  []
+  {:id :_id
+   :type entity-type
+   :entity-name (get-label 1017)
+   :fields {:mname {:label (get-label 1010)
+                    :input-el "text"
+                    :attrs {:required "required"}}
+            :calories-sum {:label (get-label 1018)
+                           :input-el "number"
+                           :attrs {:step "0.1"
+                                   :disabled true}}
+            :proteins-sum {:label (get-label 1019)
+                           :input-el "number"
+                           :attrs {:step "0.1"
+                                   :disabled true}}
+            :fats-sum {:label (get-label 1020)
+                       :input-el "number"
+                       :attrs {:step "0.1"
+                               :disabled true}}
+            :carbonhydrates-sum {:label (get-label 1021)
+                                 :input-el "number"
+                                 :attrs {:step "0.1"
+                                         :disabled true}}
+            :description  {:label (get-label 1015)
+                           :input-el "textarea"
+                           :attrs {:required "required"}}
+            :image {:label (get-label 1022)
+                    :input-el "img"}
+            :mtype {:label (get-label 1023)
+                    :input-el "checkbox"
+                    :attrs {:required "required"}
+                    :options ["Breakfast"
+                              "Lunch"
+                              "Dinner"]}
+            :portion {:label (get-label 1024)
+                      :input-el "radio"
+                      :attrs {:required "required"}
+                      :options ["Main course"
+                                "Sauce"
+                                "Beverage"
+                                "Soup"
+                                "Sweets, Cakes, Compote, Ice cream"
+                                "Salad"]}
+            :ingredients {:label (get-label 1025)
+                          :input-el "sub-form"
+                          :sub-form-trs sub-form}}
+   :fields-order [:mname
+                  :calories-sum
+                  :proteins-sum
+                  :fats-sum
+                  :carbonhydrates-sum
+                  :description
+                  :image
+                  :mtype
+                  :portion
+                  :ingredients]
+   :specific-read-form read-form})
 
-(def columns
-     {:projection [:mname
-                   :calories-sum
-                   :proteins-sum
-                   :fats-sum
-                   :carbonhydrates-sum
-                 ; :description
-                 ; :image
-                 ; :mtype
-                 ; :ingredients
-                   ]
-      :style
-       {:mname
-         {:content (get-label 1010)
-          :th {:style {:width "200px"}}
-          :td {:style {:width "200px"
-                       :text-align "left"}}
-          }
-        :calories-sum
-         {:content (get-label 1018)
-          :th {:style {:width "40px"}
-               :title (get-label 1018)}
-          :td {:style {:text-align "right"}}
-          }
-        :proteins-sum
-         {:content (get-label 1019)
-          :th {:style {"width" "40px"}
-               :title (get-label 1019)}
-          :td {:style {"text-align" "right"}}
-          }
-        :fats-sum
-         {:content (get-label 1020)
-          :th {:style {:width "40px"}
-               :title (get-label 1020)}
-          :td {:style {:text-align "right"}}
-          }
-        :carbonhydrates-sum
-         {:content (get-label 1021)
-          :th {:style {"width" "40px"}
-               :title (get-label 1021)}
-          :td {:style {:text-align "right"}}
-          }
-        :description
-         {:content (get-label 1015)
-          :th {:style {"width" "40px"}
-               :title (get-label 1015)}
-          :td {:style {:text-align "right"}}
-          }
-        :image
-         {:content (get-label 1022)
-          :th {:style {"width" "40px"}
-               :title (get-label 1022)}
-          :td {:style {:text-align "right"}}
-          }
-        :mtype
-         {:content (get-label 1023)
-          :th {:style {"width" "40px"}
-               :title (get-label 1023)}
-          :td {:style {:text-align "right"}}
-          }
-        :ingredients
-         {:content (get-label 1024)
-          :th {:style {"width" "40px"}
-               :title (get-label 1024)}
-          :td {:style {:text-align "right"}}
-          }}
-       })
+(defn columns-fn
+  ""
+  []
+  {:projection [:mname
+                :calories-sum
+                :proteins-sum
+                :fats-sum
+                :carbonhydrates-sum
+              ; :description
+              ; :image
+              ; :mtype
+              ; :ingredients
+                ]
+   :style
+    {:mname
+      {:content (get-label 1010)
+       :th {:style {:width "200px"}}
+       :td {:style {:width "200px"
+                    :text-align "left"}}
+       }
+     :calories-sum
+      {:content (get-label 1018)
+       :th {:style {:width "40px"}
+            :title (get-label 1018)}
+       :td {:style {:text-align "right"}}
+       }
+     :proteins-sum
+      {:content (get-label 1019)
+       :th {:style {"width" "40px"}
+            :title (get-label 1019)}
+       :td {:style {"text-align" "right"}}
+       }
+     :fats-sum
+      {:content (get-label 1020)
+       :th {:style {:width "40px"}
+            :title (get-label 1020)}
+       :td {:style {:text-align "right"}}
+       }
+     :carbonhydrates-sum
+      {:content (get-label 1021)
+       :th {:style {"width" "40px"}
+            :title (get-label 1021)}
+       :td {:style {:text-align "right"}}
+       }
+     :description
+      {:content (get-label 1015)
+       :th {:style {"width" "40px"}
+            :title (get-label 1015)}
+       :td {:style {:text-align "right"}}
+       }
+     :image
+      {:content (get-label 1022)
+       :th {:style {"width" "40px"}
+            :title (get-label 1022)}
+       :td {:style {:text-align "right"}}
+       }
+     :mtype
+      {:content (get-label 1023)
+       :th {:style {"width" "40px"}
+            :title (get-label 1023)}
+       :td {:style {:text-align "right"}}
+       }
+     :ingredients
+      {:content (get-label 1024)
+       :th {:style {"width" "40px"}
+            :title (get-label 1024)}
+       :td {:style {:text-align "right"}}
+       }}
+    })
 
-(def query
-     {:entity-type  entity-type
-      :entity-filter  {}
-      :projection  (:projection columns)
-      :projection-include  true
-      :qsort  {:mname 1}
-      :pagination  true
-      :current-page  0
-      :rows  25
-      :collation {:locale "sr"}})
+(defn query-fn
+  ""
+  []
+  {:entity-type  entity-type
+   :entity-filter  {}
+   :projection  (:projection (columns-fn))
+   :projection-include  true
+   :qsort  {:mname 1}
+   :pagination  true
+   :current-page  0
+   :rows  25
+   :collation {:locale "sr"}})
 
 (defn table-conf-fn
   ""
   []
-  {:query query
-   :columns columns
-   :form-conf form-conf
+  {:query (query-fn)
+   :columns (columns-fn)
+   :form-conf (form-conf-fn)
    :actions [:details :edit :delete]
    :allowed-actions @allowed-actions
    :search-on true
