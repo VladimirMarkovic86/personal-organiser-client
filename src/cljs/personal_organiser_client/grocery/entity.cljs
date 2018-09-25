@@ -264,7 +264,7 @@
       ))
 
 (defn form-conf-fn
-  ""
+  "Form configuration for grocery entity"
   []
   {:id :_id
    :type entity-type
@@ -310,7 +310,7 @@
                   ]})
 
 (defn columns-fn
-  ""
+  "Table columns for grocery entity"
   []
   {:projection [:gname
                 :calories
@@ -370,7 +370,7 @@
     })
 
 (defn query-fn
-  ""
+  "Table query for grocery entity"
   []
   {:entity-type entity-type
    :entity-filter {}
@@ -383,7 +383,7 @@
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
-  ""
+  "Table configuration for grocery entity"
   []
   {:query (query-fn)
    :columns (columns-fn)

@@ -7,7 +7,7 @@
      "organism")
 
 (defn form-conf-fn
-  ""
+  "Form configuration for organism entity"
   []
   {:id :_id
    :type entity-type
@@ -50,7 +50,7 @@
                   :activity]})
 
 (defn columns-fn
-  ""
+  "Table columns for organism entity"
   []
   {:projection [:first-name
                 :last-name
@@ -116,7 +116,7 @@
     })
 
 (defn query-fn
-  ""
+  "Table query for organism entity"
   []
   {:entity-type entity-type
    :entity-filter {}
@@ -129,7 +129,7 @@
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
-  ""
+  "Table configuration for organism entity"
   []
   {:query (query-fn)
    :columns (columns-fn)

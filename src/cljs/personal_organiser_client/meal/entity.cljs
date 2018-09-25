@@ -63,7 +63,7 @@
       :collation {:locale "sr"}})
 
 (defn- get-options
-  ""
+  "Get options for ingredients select element"
   []
   (ajax
     {:url rurls/get-entities-url
@@ -495,7 +495,7 @@
  )
 
 (defn form-conf-fn
-  ""
+  "Form configuration for meal entity"
   []
   {:id :_id
    :type entity-type
@@ -555,7 +555,7 @@
    :specific-read-form read-form})
 
 (defn columns-fn
-  ""
+  "Table columns for meal entity"
   []
   {:projection [:mname
                 :calories-sum
@@ -625,7 +625,7 @@
     })
 
 (defn query-fn
-  ""
+  "Table query for meal entity"
   []
   {:entity-type  entity-type
    :entity-filter  {}
@@ -638,7 +638,7 @@
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
-  ""
+  "Table configuration for meal entity"
   []
   {:query (query-fn)
    :columns (columns-fn)
