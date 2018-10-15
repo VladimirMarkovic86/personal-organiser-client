@@ -1,20 +1,22 @@
-(defproject org.vladimir/personal-organiser-client "0.1.0"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject org.clojars.vladimirmarkovic86/personal-organiser-client "0.1.0"
+  :description "Personal ograniser client"
+  :url "http://github.com/VladimirMarkovic86/personal-organiser-client"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.10.339"]
-                 [org.vladimir/ajax-lib "0.1.0"]
-                 [org.vladimir/htmlcss-lib "0.1.0"]
-                 [org.vladimir/js-lib "0.1.0"]
-                 [org.vladimir/framework-lib "0.1.0"]
-                 [org.vladimir/utils-lib "0.1.0"]
-                 [org.vladimir/language-lib "0.1.0"]
-                 [org.vladimir/personal-organiser-middle "0.1.0"]
-                 [org.vladimir/common-client "0.1.0"]
-                 [org.vladimir/server-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/ajax-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/htmlcss-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/js-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/framework-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/utils-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/language-lib "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/personal-organiser-middle "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/common-client "0.1.0"]
+                 [org.clojars.vladimirmarkovic86/server-lib "0.1.0"]
                  ]
+
+  :min-lein-version "2.0.0"
   
   :resource-paths ["resources"]
   :source-paths ["src/clj"]
