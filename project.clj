@@ -20,7 +20,11 @@
   
   :resource-paths ["resources"]
   :source-paths ["src/clj"]
+  
   :main ^:skip-aot personal-organiser-client.core
+  
+  :uberjar-name "personal-organiser-client-standalone.jar"
+  :profiles {:uberjar {:aot :all}}
   
   :plugins [[lein-cljsbuild  "1.1.7"]
             ]
@@ -41,6 +45,5 @@
                      :output-dir "resources/public/jsprod/out"
                      :asset-path "jsprod/out"
                      :optimizations :advanced}}
-     }}
-  )
+     }})
 
