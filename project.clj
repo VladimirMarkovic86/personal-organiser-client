@@ -13,7 +13,7 @@
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.0"]
                  [org.clojars.vladimirmarkovic86/personal-organiser-middle "0.1.0"]
                  [org.clojars.vladimirmarkovic86/common-client "0.2.0"]
-                 [org.clojars.vladimirmarkovic86/server-lib "0.3.1"]
+                 [org.clojars.vladimirmarkovic86/server-lib "0.3.7"]
                  ]
 
   :min-lein-version "2.0.0"
