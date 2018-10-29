@@ -15,9 +15,17 @@
 (defn am-i-logged-in
   "Check if session is active"
   []
-  (reset!
-    base-url
-    "https://personal-organiser:1601")
+  (let [base-uri (.-baseURI
+                   js/document)
+        base-uri (if (< -1
+                        (.indexOf
+                          base-uri
+                          "herokuapp"))
+                   "https://personal-organiser-server.herokuapp.com"
+                   "https://personal-organiser:1601")]
+    (reset!
+      base-url
+      base-uri))
   (reset!
     with-credentials
     true)
