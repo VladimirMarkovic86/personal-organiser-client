@@ -13,27 +13,36 @@
    :type entity-type
    :entity-name (get-label 1026)
    :fields {:first-name {:label (get-label 1001)
-                         :input-el "text"}
+                         :input-el "text"
+                         :attrs {:required "required"}}
             :last-name {:label (get-label 1002)
-                        :input-el "text"}
+                        :input-el "text"
+                        :attrs {:required "required"}}
             :email {:label (get-label 14)
-                    :input-el "text"}
+                    :input-el "email"
+                    :attrs {:required "required"}}
             :height {:label (get-label 1003)
                      :input-el "number"
-                     :attrs {:step "0.1"}}
+                     :attrs {:step "0.1"
+                             :required "required"}}
             :weight {:label (get-label 1004)
                      :input-el "number"
-                     :attrs {:step "0.1"}}
+                     :attrs {:step "0.1"
+                             :required "required"}}
             :birthday {:label (get-label 1005)
-                       :input-el "date"}
+                       :input-el "date"
+                       :attrs {:required "required"}}
             :gender {:label (get-label 1006)
                      :input-el "radio"
+                     :attrs {:required "required"}
                      :options ["Male" "Female"]}
             :diet {:label (get-label 1007)
                    :input-el "radio"
+                   :attrs {:required "required"}
                    :options ["All" "Vegetarian"]}
             :activity {:label (get-label 1008)
                        :input-el "radio"
+                       :attrs {:required "required"}
                        :options ["Mainly sitting"
                                  "Easy physical labor"
                                  "Medium physical labor"

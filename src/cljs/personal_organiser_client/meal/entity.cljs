@@ -1,5 +1,5 @@
 (ns personal-organiser-client.meal.entity
-  (:require [ajax-lib.core :refer [ajax get-response]]
+  (:require [ajax-lib.core :refer [sjax get-response]]
             [htmlcss-lib.core :refer [gen div input table thead tbody
                                       tr th td h4 select option]]
             [js-lib.core :as md]
@@ -16,12 +16,32 @@
 (def entity-sub-type
      "grocery")
 
-(defn- populate-select
+(def select-conf
+     {:entity-type entity-sub-type
+      :entity-filter {}
+      :projection [:gname
+                   :calories
+                   :proteins
+                   :fats
+                   :carbonhydrates]
+      :projection-include true
+      :qsort {:gname 1}
+      :pagination false
+      :current-page 0
+      :rows 0
+      :collation {:locale "sr"}})
+
+(defn get-select-options
   "Generate options for select HTML element"
-  [xhr]
-  (let [response (get-response xhr)
+  []
+  (let [xhr (sjax
+              {:url rurls/get-entities-url
+               :entity select-conf})
+        response (get-response xhr)
         entities (:data response)
-        options (atom [])]
+        options (atom [(option
+                         "- Select one -"
+                         {:value "-1"})])]
     (doseq [{opt-value :_id
              opt-label :gname
              opt-calories :calories
@@ -39,38 +59,9 @@
            :opt-fats opt-fats
            :opt-carbonhydrates opt-carbonhydrates}))
      )
-    (md/append-element
-      ".entity #slctGrocery"
-      (gen @options))
-    (md/remove-all-event
-      ".entity #slctGrocery"
-      "onfocus"))
- )
+    @options))
 
-(def select-conf
-     {:entity-type entity-sub-type
-      :entity-filter {}
-      :projection [:gname
-                   :calories
-                   :proteins
-                   :fats
-                   :carbonhydrates]
-      :projection-include true
-      :qsort {:gname 1}
-      :pagination false
-      :current-page 0
-      :rows 0
-      :collation {:locale "sr"}})
-
-(defn- get-options
-  "Get options for ingredients select element"
-  []
-  (ajax
-    {:url rurls/get-entities-url
-     :success-fn populate-select
-     :entity select-conf}))
-
-(defn- add-ingrediant-in-table
+(defn add-ingredient-in-table
   "Add ingredient in table"
   [{selected-g-value :value
     opt-calories :opt-calories
@@ -88,7 +79,7 @@
                        selected-g-value "\"]"))]
     (if i-table
       (if ing-exists
-        (.log js/console "Ingrediant exists")
+        (.log js/console "Ingredient exists")
         (md/append-element
           "#i-table tbody"
           (gen
@@ -147,7 +138,7 @@
      ))
  )
 
-(defn- add-ingredient
+(defn add-ingredient
   "Add ingredient in table and calculate calories, proteins, fats and carbonhydrates"
   []
   (let [selected-g-slctr "#slctGrocery"
@@ -204,7 +195,7 @@
         quantity-g-slctr))
     (if (empty? @invalid-fields)
       (do
-        (add-ingrediant-in-table
+        (add-ingredient-in-table
           selected-g
           grams-g
           quantity-g)
@@ -271,49 +262,19 @@
      ))
  )
 
-(defn- read-form
+(defn read-form
   "Read meal form"
-  [entity]
-  (swap!
-    entity
-    conj
-    {:mname (str
-              (md/get-value
-                "#mname"))
-     :calories-sum (str
-                     (md/get-value
-                       "#calories-sum"))
-     :proteins-sum (str
-                     (md/get-value
-                       "#proteins-sum"))
-     :fats-sum (str
-                 (md/get-value
-                   "#fats-sum"))
-     :carbonhydrates-sum (str
-                           (md/get-value
-                             "#carbonhydrates-sum"))
-     :description (str
-                    (md/get-value
-                      "#description"))
-     :image (aget
-              (md/query-selector
-                "#image")
-              "src")
-     :mtype (md/cb-checked-values
-              "mtype")
-     :portion (str
-                (md/checked-value
-                  "portion"))})
+  []
   (let [itr (atom 0)
-        ingrediant (atom [])
-        ingrediants (atom [])
+        ingredient (atom [])
+        ingredients (atom [])
         tds (md/query-selector-all
               "#i-table-placeholder tbody td")]
     (doseq [td tds]
       (if (< @itr 3)
         (do
           (swap!
-            ingrediant
+            ingredient
             conj
             (md/get-attr
               td
@@ -321,7 +282,7 @@
           (when (= @itr
                    0)
            (swap!
-             ingrediant
+             ingredient
              conj
              (md/get-inner-html
                td))
@@ -331,20 +292,20 @@
             inc))
         (do
           (swap!
-            ingrediants
+            ingredients
             conj
-            @ingrediant)
+            @ingredient)
           (reset!
-            ingrediant
+            ingredient
             [])
           (swap!
-            ingrediant
+            ingredient
             conj
             (md/get-attr
               td
               "value"))
           (swap!
-            ingrediant
+            ingredient
             conj
             (md/get-inner-html
               td))
@@ -353,18 +314,12 @@
             1))
        ))
     (swap!
-      ingrediants
+      ingredients
       conj
-      @ingrediant)
-    (swap!
-      entity
-      conj
-      {:ingrediants @ingrediants}))
-  ;(.log js/console (str @entity))
-  (str
-    @entity))
+      @ingredient)
+    @ingredients))
 
-(defn- sub-form
+(defn sub-form
   "Generate ingredients sub form"
   [data
    attrs]
@@ -381,14 +336,12 @@
           (get-label 1009))
         (td
           (select
-            (option
-              "- Select one -"
-              {:value "-1"})
+            (get-select-options)            
             (if disabled
               {:id "slctGrocery"
                :disabled "disabled"}
-              {:id "slctGrocery"})
-            {:onfocus {:evt-fn get-options}}))
+              {:id "slctGrocery"}))
+         )
         (td)])
      (tr
        [(td
@@ -439,7 +392,7 @@
                :value "Add"})
             {:onclick {:evt-fn add-ingredient}}))
         (td)])
-     (if-let [ingrediants (:ingrediants data)]
+     (if-let [ingredients (:ingredients data)]
        (tr
          (td
            (div
@@ -456,10 +409,10 @@
                        (get-label 1028)
                        {:style {:width "40px"}})]))
                 (tbody
-                  (let [ingrediants-vector (atom [])]
-                    (doseq [[_id gname grams quantity] ingrediants]
+                  (let [ingredients-vector (atom [])]
+                    (doseq [[_id gname grams quantity] ingredients]
                       (swap!
-                        ingrediants-vector
+                        ingredients-vector
                         conj
                         (tr
                           [(td
@@ -474,24 +427,51 @@
                              {:value quantity
                               :style {:text-align "right"}})])
                        ))
-                   @ingrediants-vector))]
+                   @ingredients-vector))]
                {:id "i-table"
                 :style {:border-spacing "initial"}})
              {:class "entities"})
            {:id "i-table-placeholder"
             :colspan 3
             :style {:width "390px"}}))
-      (tr
-        (td
-          (table
-            (tr
-              (td
-                "No ingredients"))
-            {:style {:margin-left "calc(50% - 60px)"}})
-          {:id "i-table-placeholder"
-           :colspan 3
-           :style {:width "390px"}}))
-      )])
+       (tr
+         (td
+           (table
+             (tr
+               (td
+                 "No ingredients"))
+             {:style {:margin-left "calc(50% - 60px)"}})
+           {:id "i-table-placeholder"
+            :colspan 3
+            :style {:width "390px"}}))
+      )
+     (tr
+       (td
+         ""
+         {:id "tdingredients"
+          :class "validationMessage"
+          :colspan 3
+          :style {:text-align "center"}}))]
+     ))
+
+(defn validate-form
+  "Validate ingredients sub form"
+  [validations]
+  (let [ingredients (read-form)]
+    (when (and (= (count
+                    ingredients)
+                  1)
+               (empty?
+                 (get
+                   ingredients
+                   0))
+           )
+      (swap!
+        validations
+        conj
+        ["#tdingredients"
+         (get-label 1029)])
+     ))
  )
 
 (defn form-conf-fn
@@ -505,19 +485,19 @@
                     :attrs {:required "required"}}
             :calories-sum {:label (get-label 1018)
                            :input-el "number"
-                           :attrs {:step "0.1"
+                           :attrs {:step "0.001"
                                    :disabled true}}
             :proteins-sum {:label (get-label 1019)
                            :input-el "number"
-                           :attrs {:step "0.1"
+                           :attrs {:step "0.001"
                                    :disabled true}}
             :fats-sum {:label (get-label 1020)
                        :input-el "number"
-                       :attrs {:step "0.1"
+                       :attrs {:step "0.001"
                                :disabled true}}
             :carbonhydrates-sum {:label (get-label 1021)
                                  :input-el "number"
-                                 :attrs {:step "0.1"
+                                 :attrs {:step "0.001"
                                          :disabled true}}
             :description  {:label (get-label 1015)
                            :input-el "textarea"
@@ -541,7 +521,9 @@
                                 "Salad"]}
             :ingredients {:label (get-label 1025)
                           :input-el "sub-form"
-                          :sub-form-trs sub-form}}
+                          :sub-form-trs sub-form
+                          :sub-form-trs-read read-form
+                          :sub-form-validation validate-form}}
    :fields-order [:mname
                   :calories-sum
                   :proteins-sum
@@ -551,8 +533,7 @@
                   :image
                   :mtype
                   :portion
-                  :ingredients]
-   :specific-read-form read-form})
+                  :ingredients]})
 
 (defn columns-fn
   "Table columns for meal entity"

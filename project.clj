@@ -8,7 +8,7 @@
                  [org.clojars.vladimirmarkovic86/ajax-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/htmlcss-lib "0.1.0"]
                  [org.clojars.vladimirmarkovic86/js-lib "0.1.0"]
-                 [org.clojars.vladimirmarkovic86/framework-lib "0.2.3"]
+                 [org.clojars.vladimirmarkovic86/framework-lib "0.2.4"]
                  [org.clojars.vladimirmarkovic86/utils-lib "0.3.0"]
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.0"]
                  [org.clojars.vladimirmarkovic86/personal-organiser-middle "0.1.0"]
