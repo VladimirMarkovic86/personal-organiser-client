@@ -34,6 +34,8 @@ lein run
 
 By default project listens on port 1611, open browser and go to https://personal-organiser:1611.
 
+**For this to work you must start up personal-organiser-server project also**
+
 ## Authors
 
 * **Vladimir Markovic** - [VladimirMarkovic86](https://github.com/VladimirMarkovic86)
