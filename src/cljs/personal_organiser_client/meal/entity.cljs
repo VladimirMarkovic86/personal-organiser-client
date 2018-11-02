@@ -8,13 +8,15 @@
             [cljs.reader :as reader]
             [language-lib.core :refer [get-label]]
             [common-middle.request-urls :as rurls]
-            [common-client.allowed-actions.controller :refer [allowed-actions]]))
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [personal-organiser-middle.collection-names :refer [meal-cname
+                                                                grocery-cname]]))
 
 (def entity-type
-     "meal")
+     meal-cname)
 
 (def entity-sub-type
-     "grocery")
+     grocery-cname)
 
 (def select-conf
      {:entity-type entity-sub-type

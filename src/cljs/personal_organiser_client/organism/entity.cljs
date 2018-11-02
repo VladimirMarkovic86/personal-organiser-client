@@ -1,10 +1,11 @@
 (ns personal-organiser-client.organism.entity
   (:require [framework-lib.core :refer [gen-table]]
             [language-lib.core :refer [get-label]]
-            [common-client.allowed-actions.controller :refer [allowed-actions]]))
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [personal-organiser-middle.collection-names :refer [organism-cname]]))
 
 (def entity-type
-     "organism")
+     organism-cname)
 
 (defn form-conf-fn
   "Form configuration for organism entity"

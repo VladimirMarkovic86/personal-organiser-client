@@ -3,9 +3,11 @@
             [htmlcss-lib.core :refer [gen crt table tr th
                                       td h1 label input]]
             [language-lib.core :refer [get-label]]
-            [common-client.allowed-actions.controller :refer [allowed-actions]]))
+            [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [personal-organiser-middle.collection-names :refer [grocery-cname]]))
 
-(def entity-type "grocery")
+(def entity-type
+     grocery-cname)
 
 ;(def grocery-data
 ; (atom
