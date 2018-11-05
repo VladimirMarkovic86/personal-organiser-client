@@ -296,7 +296,10 @@
             :origin {:label (get-label 1016)
                      :input-el "radio"
                      :attrs {:required "required"}
-                     :options ["All" "Vegetarian"]}
+                     :options [[(get-label 1042)
+                                "all"]
+                               [(get-label 1043)
+                                "vegetarian"]]}
             ;:vitmin {:label "Vitamins and Minerals"
             ;         :field-type "popup"
             ;         :popup popup-form}

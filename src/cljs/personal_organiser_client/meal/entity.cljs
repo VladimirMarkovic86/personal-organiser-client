@@ -42,7 +42,7 @@
         response (get-response xhr)
         entities (:data response)
         options (atom [(option
-                         "- Select one -"
+                         (get-label 32)
                          {:value "-1"})])]
     (doseq [{opt-value :_id
              opt-label :gname
@@ -180,7 +180,8 @@
     (when (or ing-exists
               (= selected-g
                  {:value "-1"
-                  :label "- Select one -"}))
+                  :label (get-label 32)})
+           )
       (swap!
         invalid-fields
         conj
@@ -329,7 +330,7 @@
     [(tr
        (td
          (h4
-           "Ingredients"
+           (get-label 1040)
            {:id "lblIngredients"
             :style {:text-align "center"}})
          {:colspan 3}))
@@ -386,12 +387,12 @@
               {:id "btnAddIngredient"
                :name "btnAddIngredient"
                :type "button"
-               :value "Add"
+               :value (get-label 1041)
                :disabled "disabled"}
               {:id "btnAddIngredient"
                :name "btnAddIngredient"
                :type "button"
-               :value "Add"})
+               :value (get-label 1041)})
             {:onclick {:evt-fn add-ingredient}}))
         (td)])
      (if-let [ingredients (:ingredients data)]
@@ -441,7 +442,8 @@
            (table
              (tr
                (td
-                 "No ingredients"))
+                 (get-label 1039))
+              )
              {:style {:margin-left "calc(50% - 60px)"}})
            {:id "i-table-placeholder"
             :colspan 3
@@ -509,18 +511,27 @@
             :mtype {:label (get-label 1023)
                     :input-el "checkbox"
                     :attrs {:required "required"}
-                    :options ["Breakfast"
-                              "Lunch"
-                              "Dinner"]}
+                    :options [[(get-label 1030)
+                               "breakfast"]
+                              [(get-label 1031)
+                               "lunch"]
+                              [(get-label 1032)
+                               "dinner"]]}
             :portion {:label (get-label 1024)
                       :input-el "radio"
                       :attrs {:required "required"}
-                      :options ["Main course"
-                                "Sauce"
-                                "Beverage"
-                                "Soup"
-                                "Sweets, Cakes, Compote, Ice cream"
-                                "Salad"]}
+                      :options [[(get-label 1033)
+                                 "main_course"]
+                                [(get-label 1034)
+                                 "sauce"]
+                                [(get-label 1035)
+                                 "beverage"]
+                                [(get-label 1036)
+                                 "soup"]
+                                [(get-label 1037)
+                                 "sweets_cakes_compote_ice_cream"]
+                                [(get-label 1038)
+                                 "salad"]]}
             :ingredients {:label (get-label 1025)
                           :input-el "sub-form"
                           :sub-form-trs sub-form
