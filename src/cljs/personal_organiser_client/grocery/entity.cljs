@@ -334,42 +334,42 @@
      :calories
       {:content (get-label 1011)
        :th {:style {:max-width "40px"}
-            :title (get-label 37)}
+            :title (get-label 1011)}
        :td {:style {:max-width "40px"
                     :text-align "right"}}
        }
      :proteins
       {:content (get-label 1012)
        :th {:style {:max-width "40px"}
-            :title (get-label 38)}
+            :title (get-label 1012)}
        :td {:style {:max-width "40px"
                     :text-align "right"}}
        }
      :fats
       {:content (get-label 1013)
        :th {:style {:max-width "40px"}
-            :title (get-label 39)}
+            :title (get-label 1013)}
        :td {:style {:max-width "40px"
                     :text-align "right"}}
        }
      :carbonhydrates
       {:content (get-label 1014)
        :th {:style {:max-width "40px"}
-            :title (get-label 40)}
+            :title (get-label 1014)}
        :td {:style {:max-width "40px"
                     :text-align "right"}}
        }
      :description
       {:content (get-label 1015)
        :th {:style {:max-width "40px"}
-            :title (get-label 41)}
+            :title (get-label 1015)}
        :td {:style {:max-width "40px"
                     :text-align "left"}}
        }
      :origin
       {:content (get-label 1016)
        :th {:style {:max-width "40px"}
-            :title (get-label 42)}
+            :title (get-label 1016)}
        :td {:style {:max-width "40px"}}
        }}
     })
