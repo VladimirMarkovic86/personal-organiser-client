@@ -265,6 +265,14 @@
           (td)])]
       ))
 
+(defn origin-labels
+  "Returns origin property labels"
+  []
+  [[(get-label 1042)
+    "all"]
+   [(get-label 1043)
+    "vegetarian"]])
+
 (defn form-conf-fn
   "Form configuration for grocery entity"
   []
@@ -273,33 +281,42 @@
    :entity-name (get-label 1009)
    :fields {:gname {:label (get-label 1010)
                     :input-el "text"
-                    :attrs {:required "required"}}
+                    :attrs {:placeholder (get-label 1010)
+                            :title (get-label 1010)
+                            :required true}}
             :calories {:label (get-label 1011)
                        :input-el "number"
                        :attrs {:step "0.1"
-                               :required "required"}}
+                               :placeholder (get-label 1011)
+                               :title (get-label 1011)
+                               :required true}}
             :proteins {:label (get-label 1012)
                        :input-el "number"
                        :attrs {:step "0.1"
-                               :required "required"}}
+                               :placeholder (get-label 1012)
+                               :title (get-label 1012)
+                               :required true}}
             :fats {:label (get-label 1013)
                    :input-el "number"
                    :attrs {:step "0.1"
-                           :required "required"}}
+                           :placeholder (get-label 1013)
+                           :title (get-label 1013)
+                           :required true}}
             :carbonhydrates {:label (get-label 1014)
                              :input-el "number"
                              :attrs {:step "0.1"
-                                     :required "required"}}
+                                     :placeholder (get-label 1014)
+                                     :title (get-label 1014)
+                                     :required true}}
             :description {:label (get-label 1015)
                           :input-el "textarea"
-                          :attrs {:required "required"}}
+                          :attrs {:placeholder (get-label 1015)
+                                  :title (get-label 1015)
+                                  :required true}}
             :origin {:label (get-label 1016)
                      :input-el "radio"
-                     :attrs {:required "required"}
-                     :options [[(get-label 1042)
-                                "all"]
-                               [(get-label 1043)
-                                "vegetarian"]]}
+                     :attrs {:required true}
+                     :options (origin-labels)}
             ;:vitmin {:label "Vitamins and Minerals"
             ;         :field-type "popup"
             ;         :popup popup-form}
@@ -328,50 +345,46 @@
    :style
     {:gname
       {:content (get-label 1010)
-       :th {:style {:max-width "200px"}}
-       :td {:style {:max-width "200px"
+       :th {:style {:width "22%"}}
+       :td {:style {:width "22%"
                     :text-align "left"}}}
      :calories
       {:content (get-label 1011)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1011)}
-       :td {:style {:max-width "40px"
+       :th {:style {:width "6.5%"}}
+       :td {:style {:width "6.5%"
                     :text-align "right"}}
        }
      :proteins
       {:content (get-label 1012)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1012)}
-       :td {:style {:max-width "40px"
+       :th {:style {:width "6.5%"}}
+       :td {:style {:width "6.5%"
                     :text-align "right"}}
        }
      :fats
       {:content (get-label 1013)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1013)}
-       :td {:style {:max-width "40px"
+       :th {:style {:width "6.5%"}}
+       :td {:style {:width "6.5%"
                     :text-align "right"}}
        }
      :carbonhydrates
       {:content (get-label 1014)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1014)}
-       :td {:style {:max-width "40px"
+       :th {:style {:width "6.5%"}}
+       :td {:style {:width "6.5%"
                     :text-align "right"}}
        }
      :description
       {:content (get-label 1015)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1015)}
-       :td {:style {:max-width "40px"
+       :th {:style {:width "15%"}}
+       :td {:style {:width "15%"
                     :text-align "left"}}
        }
      :origin
       {:content (get-label 1016)
-       :th {:style {:max-width "40px"}
-            :title (get-label 1016)}
-       :td {:style {:max-width "40px"}}
-       }}
+       :th {:style {:width "12%"}}
+       :td {:style {:width "12%"}}
+       :labels (into
+                 #{}
+                 (origin-labels))}}
     })
 
 (defn query-fn
@@ -384,7 +397,7 @@
    :qsort {:gname 1}
    :pagination true
    :current-page 0
-   :rows 25
+   :rows 10
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
