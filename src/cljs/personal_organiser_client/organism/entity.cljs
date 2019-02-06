@@ -2,7 +2,9 @@
   (:require [framework-lib.core :refer [gen-table]]
             [language-lib.core :refer [get-label]]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
-            [personal-organiser-middle.collection-names :refer [organism-cname]]))
+            [personal-organiser-middle.collection-names :refer [organism-cname]]
+            [personal-organiser-middle.grocery.entity :as pomge]
+            [personal-organiser-middle.organism.entity :as pomoe]))
 
 (def entity-type
      organism-cname)
@@ -11,31 +13,31 @@
   "Returns gender property labels"
   []
   [[(get-label 1050)
-    "male"]
+    pomoe/gender-male]
    [(get-label 1051)
-    "female"]])
+    pomoe/gender-female]])
 
 (defn diet-labels
   "Returns diet property labels"
   []
-  [[(get-label 1042)
-    "all"]
-   [(get-label 1044)
-    "vegetarian"]])
+  [[(get-label 1044)
+    pomge/diet-vegetarian]
+   [(get-label 1042)
+    pomge/diet-not-vegetarian]])
 
 (defn activity-labels
   "Returns activity property labels"
   []
   [[(get-label 1045)
-    "mainly_sitting"]
+    pomoe/activity-mainly-sitting]
    [(get-label 1046)
-    "easy_physical_labor"]
+    pomoe/activity-easy-physical-labor]
    [(get-label 1047)
-    "medium_physical_labor"]
+    pomoe/activity-medium-physical-labor]
    [(get-label 1048)
-    "hard_physical_labor"]
+    pomoe/activity-hard-physical-labor]
    [(get-label 1049)
-    "very_hard_physical_labor"]])
+    pomoe/activity-very-hard-physical-labor]])
 
 (defn form-conf-fn
   "Form configuration for organism entity"
@@ -90,9 +92,9 @@
    :fields-order [:first-name
                   :last-name
                   :email
+                  :birthday
                   :height
                   :weight
-                  :birthday
                   :gender
                   :diet
                   :activity]})

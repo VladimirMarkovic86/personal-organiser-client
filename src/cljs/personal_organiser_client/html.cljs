@@ -5,6 +5,7 @@
             [personal-organiser-client.grocery.html :as gh]
             [personal-organiser-client.meal.html :as mh]
             [personal-organiser-client.organism.html :as oh]
+            [personal-organiser-client.meal-recommendation.html :as mrh]
             [language-lib.core :refer [get-label]]))
 
 (defn home-page-content
@@ -22,5 +23,6 @@
   [(gh/nav)
    (mh/nav)
    (oh/nav)
+   (mrh/nav)
    ])
 

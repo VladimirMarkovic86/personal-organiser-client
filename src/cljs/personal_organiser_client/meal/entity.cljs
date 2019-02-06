@@ -6,11 +6,14 @@
             [js-lib.core :as md]
             [framework-lib.core :refer [gen-table]]
             [validator-lib.core :refer [validate-field]]
-            [utils-lib.core :refer [round-decimals]]
+            [utils-lib.core :as utils]
             [cljs.reader :as reader]
+            [clojure.set :as cset]
             [language-lib.core :refer [get-label]]
             [common-middle.request-urls :as rurls]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [personal-organiser-middle.meal.entity :as pomme]
+            [personal-organiser-middle.grocery.entity :as pomge]
             [personal-organiser-middle.collection-names :refer [meal-cname
                                                                 grocery-cname]]))
 
@@ -24,10 +27,12 @@
      {:entity-type entity-sub-type
       :entity-filter {}
       :projection [:gname
+                   :label-code
                    :calories
                    :proteins
                    :fats
-                   :carbonhydrates]
+                   :carbonhydrates
+                   :diet]
       :projection-include true
       :qsort {:gname 1}
       :pagination false
@@ -38,47 +43,99 @@
 (def validate-form-atom-fn
      (atom nil))
 
-(defn get-select-options
+(def groceries
+     (atom nil))
+
+(defn get-groceries
   "Generate options for select HTML element"
   []
-  (let [xhr (sjax
-              {:url rurls/get-entities-url
-               :entity select-conf})
-        response (get-response xhr)
-        entities (:data response)
+  (when (empty?
+          @groceries)
+    (let [xhr (sjax
+                {:url rurls/get-entities-url
+                 :entity select-conf})
+          response (get-response xhr)]
+      (reset!
+        groceries
+        (:data response))
+     ))
+  @groceries)
+
+(defn grocery-select-options
+  "Build options vector for grocery select element"
+  []
+  (let [entities (get-groceries)
         options (atom [(option
                          (get-label 33)
                          {:value "-1"})])]
     (doseq [{opt-value :_id
              opt-label :gname
+             opt-label-code :label-code
              opt-calories :calories
              opt-proteins :proteins
              opt-fats :fats
-             opt-carbonhydrates :carbonhydrates} entities]
+             opt-carbonhydrates :carbonhydrates
+             opt-diet :diet} entities]
       (swap!
         options
         conj
         (option
-          opt-label
+          (if (and (utils/is-number?
+                     opt-label-code)
+                   (pos?
+                     opt-label-code))
+            (get-label
+              opt-label-code)
+            opt-label)
+          nil
+          nil
           {:value opt-value
+           :opt-label-code opt-label-code
            :opt-calories opt-calories
            :opt-proteins opt-proteins
            :opt-fats opt-fats
-           :opt-carbonhydrates opt-carbonhydrates}))
+           :opt-carbonhydrates opt-carbonhydrates
+           :opt-diet opt-diet}))
      )
     @options))
 
-(defn add-ingredient-in-table
-  "Add ingredient in table"
-  [{selected-g-value :value
-    opt-calories :opt-calories
-    opt-proteins :opt-proteins
-    opt-fats :opt-fats
-    opt-carbonhydrates :opt-carbonhydrates
-    selected-g-label :label}
+(defn generate-ingredient-row
+  "Generates ingredient row for ingredient table"
+  [selected-g-label
+   selected-g-value
    grams-g
    quantity-g]
-  (let [i-table (md/query-selector
+  (gen
+    (tr
+      [(td
+         selected-g-label
+         {:value selected-g-value
+          :title selected-g-label
+          :style {:text-align "left"}})
+       (td
+         grams-g
+         {:title grams-g
+          :style {:text-align "right"}}
+         nil
+         {:valueAsNumber grams-g})
+       (td
+         quantity-g
+         {:title quantity-g
+          :style {:text-align "right"}}
+         nil
+         {:valueAsNumber quantity-g})])
+   ))
+
+(defn add-ingredient-in-table
+  "Add ingredient in table"
+  [selected-g-opt
+   grams-g
+   quantity-g]
+  (let [selected-g-value (.-value
+                           selected-g-opt)
+        selected-g-label (.-innerHTML
+                           selected-g-opt)
+        i-table (md/query-selector
                   ".entity #ingredients table:not(.no-results)")
         ing-exists (md/query-selector
                      (str
@@ -91,24 +148,11 @@
           "Ingredient exists")
         (md/append-element
           ".entity #ingredients table tbody"
-          (gen
-            (tr
-              [(td
-                 selected-g-label
-                 {:value selected-g-value
-                  :title selected-g-label
-                  :style {:text-align "left"}})
-               (td
-                 grams-g
-                 {:value grams-g
-                  :title grams-g
-                  :style {:text-align "right"}})
-               (td
-                 quantity-g
-                 {:value quantity-g
-                  :title quantity-g
-                  :style {:text-align "right"}})])
-           ))
+          (generate-ingredient-row
+            selected-g-label
+            selected-g-value
+            grams-g
+            quantity-g))
        )
       (let [div-element (md/query-selector-on-element
                           ".entity"
@@ -144,26 +188,15 @@
                        :style {:width "25%"}})])
                 )
                (tbody
-                 (tr
-                   [(td
-                      selected-g-label
-                      {:value selected-g-value
-                       :title selected-g-label
-                       :style {:text-align "left"}})
-                    (td
-                      grams-g
-                      {:value grams-g
-                       :title grams-g
-                       :style {:text-align "right"}})
-                    (td
-                      quantity-g
-                      {:value quantity-g
-                       :title quantity-g
-                       :style {:text-align "right"}})])
-                )])
-           ))
-       ))
-   ))
+                 (generate-ingredient-row
+                   selected-g-label
+                   selected-g-value
+                   grams-g
+                   quantity-g))]
+             ))
+         ))
+     ))
+ )
 
 (defn add-ingredient
   "Add ingredient in table and calculate calories, proteins, fats and carbonhydrates"
@@ -174,28 +207,31 @@
                         selected-g-slctr)
         selected-g-el-parent (.-parentElement
                                selected-g-el)
-        selected-g (md/get-selected-options
-                     selected-g-slctr)
-        {selected-g-value :value} selected-g
+        selected-g-opt (aget
+                         (.-selectedOptions
+                           selected-g-el)
+                         0)
+        selected-g-value (.-value
+                           selected-g-opt)
         ing-exists (md/query-selector
                      (str
                        ".entity #ingredients table:not(.no-results) td[value=\""
                        selected-g-value
                        "\"]"))
         grams-g-slctr "#grams-number"
-        grams-g (md/get-value
-                  grams-g-slctr)
         grams-g-el (md/query-selector-on-element
                      ".entity"
                      grams-g-slctr)
+        grams-g (.-valueAsNumber
+                  grams-g-el)
         grams-g-el-parent (.-parentElement
                             grams-g-el)
         quantity-g-slctr "#quantity-number"
-        quantity-g (md/get-value
-                     quantity-g-slctr)
         quantity-g-el (md/query-selector-on-element
                         ".entity"
                         quantity-g-slctr)
+        quantity-g (.-valueAsNumber
+                     quantity-g-el)
         quantity-g-el-parent (.-parentElement
                                quantity-g-el)
         invalid-fields (atom [])]
@@ -209,89 +245,128 @@
       quantity-g-el-parent
       "error")
     (when (or ing-exists
-              (= selected-g
-                 {:value "-1"
-                  :label (get-label 33)})
-           )
+              (= selected-g-value
+                 "-1"))
       (swap!
         invalid-fields
         conj
         selected-g-el-parent))
-    (when (empty?
-            grams-g)
+    (when-not (utils/is-number?
+                grams-g)
       (swap!
         invalid-fields
         conj
         grams-g-el-parent))
-    (when (empty?
-            quantity-g)
+    (when-not (utils/is-number?
+                quantity-g)
       (swap!
         invalid-fields
         conj
         quantity-g-el-parent))
     (if (empty?
           @invalid-fields)
-      (do
-        (add-ingredient-in-table
-          selected-g
-          grams-g
-          quantity-g)
-        (let [calories-sum (or (reader/read-string
-                                 (md/get-value
-                                   "#calories-sum"))
-                               0)
-              proteins-sum (or (reader/read-string
-                                 (md/get-value
-                                   "#proteins-sum"))
-                               0)
-              fats-sum (or (reader/read-string
-                             (md/get-value
-                               "#fats-sum"))
+      (let [calories-sum-el (md/query-selector-on-element
+                              ".entity"
+                              "#calories-sum")
+            calories-sum-as-num (.-valueAsNumber
+                                  calories-sum-el)
+            calories-sum (if (utils/is-number?
+                               calories-sum-as-num)
+                           calories-sum-as-num
                            0)
-              carbonhydrates-sum (or (reader/read-string
-                                       (md/get-value
-                                         "#carbonhydrates-sum"))
-                                     0)
-              weight (* (/ grams-g
-                           100)
-                        quantity-g)
-              calories (+ calories-sum
-                          (* (reader/read-string
-                               (:opt-calories selected-g))
-                             weight))
-              proteins (+ proteins-sum
-                          (* (reader/read-string
-                               (:opt-proteins selected-g))
-                             weight))
-              fats (+ fats-sum
-                      (* (reader/read-string
-                           (:opt-fats selected-g))
-                         weight))
-              carbonhydrates (+ carbonhydrates-sum
-                                (* (reader/read-string
-                                     (:opt-carbonhydrates selected-g))
-                                   weight))]
-         (md/set-value
-           "#calories-sum"
-           (round-decimals
-             calories
-             2))
-         (md/set-value
-           "#proteins-sum"
-           (round-decimals
-             proteins
-             2))
-         (md/set-value
-           "#fats-sum"
-           (round-decimals
-             fats
-             2))
-         (md/set-value
-           "#carbonhydrates-sum"
-           (round-decimals
-             carbonhydrates
-             2))
-         ))
+            proteins-sum-el (md/query-selector-on-element
+                              ".entity"
+                              "#proteins-sum")
+            proteins-sum-as-num (.-valueAsNumber
+                                  proteins-sum-el)
+            proteins-sum (if (utils/is-number?
+                               proteins-sum-as-num)
+                           proteins-sum-as-num
+                           0)
+            fats-sum-el (md/query-selector-on-element
+                          ".entity"
+                          "#fats-sum")
+            fats-sum-as-num (.-valueAsNumber
+                              fats-sum-el)
+            fats-sum (if (utils/is-number?
+                           fats-sum-as-num)
+                       fats-sum-as-num
+                       0)
+            carbonhydrates-sum-el (md/query-selector-on-element
+                                    ".entity"
+                                    "#carbonhydrates-sum")
+            carbonhydrates-sum-as-num (.-valueAsNumber
+                                        carbonhydrates-sum-el)
+            carbonhydrates-sum (if (utils/is-number?
+                                     carbonhydrates-sum-as-num)
+                                 carbonhydrates-sum-as-num
+                                 0)
+            weight (* (/ grams-g
+                         100)
+                      quantity-g)
+            calories (+ calories-sum
+                        (* (aget
+                             selected-g-opt
+                             "opt-calories")
+                           weight))
+            proteins (+ proteins-sum
+                        (* (aget
+                             selected-g-opt
+                             "opt-proteins")
+                           weight))
+            fats (+ fats-sum
+                    (* (aget
+                         selected-g-opt
+                         "opt-fats")
+                       weight))
+            carbonhydrates (+ carbonhydrates-sum
+                              (* (aget
+                                   selected-g-opt
+                                   "opt-carbonhydrates")
+                                 weight))
+            opt-diet (aget
+                       selected-g-opt
+                       "opt-diet")
+            previous-diet (md/checked-value
+                            "diet")
+            diet-el (if (or (= opt-diet
+                               "not_vegetarian")
+                            (= previous-diet
+                               "not_vegetarian"))
+                      (md/query-selector-on-element
+                        ".entity"
+                        "#dietnot_vegetarian")
+                      (md/query-selector-on-element
+                        ".entity"
+                        "#dietvegetarian"))]
+       (add-ingredient-in-table
+         selected-g-opt
+         grams-g
+         quantity-g)
+       (md/set-value
+         "#calories-sum"
+         (utils/round-decimals
+           calories
+           2))
+       (md/set-value
+         "#proteins-sum"
+         (utils/round-decimals
+           proteins
+           2))
+       (md/set-value
+         "#fats-sum"
+         (utils/round-decimals
+           fats
+           2))
+       (md/set-value
+         "#carbonhydrates-sum"
+         (utils/round-decimals
+           carbonhydrates
+           2))
+       (aset
+         diet-el
+         "checked"
+         true))
       (doseq [invalid-field @invalid-fields]
         (md/add-class
           invalid-field
@@ -313,18 +388,18 @@
     (doseq [td tds]
       (if (< @itr 3)
         (do
-          (swap!
-            ingredient
-            conj
-            (md/get-attr
-              td
-              "value"))
-          (when (= @itr
-                   0)
+          (if (= @itr
+                 0)
             (swap!
               ingredient
               conj
-              (md/get-inner-html
+              (md/get-attr
+                td
+                "value"))
+            (swap!
+              ingredient
+              conj
+              (.-valueAsNumber
                 td))
            )
           (swap!
@@ -344,11 +419,6 @@
             (md/get-attr
               td
               "value"))
-          (swap!
-            ingredient
-            conj
-            (md/get-inner-html
-              td))
           (reset!
             itr
             1))
@@ -358,6 +428,30 @@
       conj
       @ingredient)
     @ingredients))
+
+(defn get-grocery-name
+  "Gets grocery name by _id parameter"
+  [_id]
+  (let [groceries (get-groceries)
+        groceries-set (into
+                        #{}
+                        groceries)
+        groceries-result (cset/select
+                           (fn [{opt-value :_id}]
+                             (= opt-value
+                                _id))
+                           groceries-set)
+        {opt-label :gname
+         opt-label-code :label-code} (first
+                                       groceries-result)]
+    (if (and (utils/is-number?
+               opt-label-code)
+             (pos?
+               opt-label-code))
+      (get-label
+        opt-label-code)
+      opt-label))
+ )
 
 (defn sub-form
   "Generate ingredients sub form"
@@ -379,7 +473,7 @@
                                 :disabled "disabled")
                               attrs)]
                   (select
-                    (get-select-options)            
+                    (grocery-select-options)
                     attrs))]
               )
              (label
@@ -451,29 +545,18 @@
                  (tbody
                    (let [ingredients-vector (atom [])]
                      (doseq [[_id
-                              gname
                               grams
                               quantity] ingredients]
                        (swap!
                          ingredients-vector
                          conj
-                         (tr
-                           [(td
-                              gname
-                              {:value _id
-                               :title gname
-                               :style {:text-align "left"}})
-                            (td
-                              grams
-                              {:value grams
-                               :title grams
-                               :style {:text-align "right"}})
-                            (td
-                              quantity
-                              {:value quantity
-                               :title quantity
-                               :style {:text-align "right"}})])
-                        ))
+                         (generate-ingredient-row
+                           (get-grocery-name
+                             _id)
+                           _id
+                           grams
+                           quantity))
+                      )
                     @ingredients-vector))]
                )
               {:class "entities"})
@@ -523,27 +606,37 @@
   "Returns meal type property labels"
   []
   [[(get-label 1030)
-    "breakfast"]
+    pomme/mtype-breakfast]
    [(get-label 1031)
-    "lunch"]
+    pomme/mtype-lunch]
    [(get-label 1032)
-    "dinner"]])
+    pomme/mtype-dinner]])
 
-(defn portion-labels
-  "Returns portion property labels"
+(defn part-of-meal-labels
+  "Returns part of meal property labels"
   []
-  [[(get-label 1033)
-    "main_course"]
+  [[(get-label 1067)
+    pomme/part-of-meal-all-in-one]
+   [(get-label 1033)
+    pomme/part-of-meal-main-course]
    [(get-label 1034)
-    "sauce"]
+    pomme/part-of-meal-sauce]
    [(get-label 1035)
-    "beverage"]
+    pomme/part-of-meal-beverage]
    [(get-label 1036)
-    "soup"]
+    pomme/part-of-meal-soup]
    [(get-label 1037)
-    "sweets_cakes_compote_ice_cream"]
+    pomme/part-of-meal-sweets-cakes-compote-ice-cream]
    [(get-label 1038)
-    "salad"]])
+    pomme/part-of-meal-salad]])
+
+(defn diet-labels
+  "Returns diet property labels"
+  []
+  [[(get-label 1044)
+    pomge/diet-vegetarian]
+   [(get-label 1042)
+    pomge/diet-not-vegetarian]])
 
 (defn form-conf-fn
   "Form configuration for meal entity"
@@ -556,6 +649,11 @@
                     :attrs {:placeholder (get-label 1010)
                             :title (get-label 1010)
                             :required true}}
+            :label-code {:label (get-label 24)
+                         :input-el "number"
+                         :attrs {:step "1"
+                                 :placeholder (get-label 24)
+                                 :title (get-label 24)}}
             :calories-sum {:label (get-label 1018)
                            :input-el "number"
                            :attrs {:step "0.001"
@@ -592,23 +690,30 @@
                     :attrs {:multiple true
                             :required true}
                     :options (mtype-labels)}
-            :portion {:label (get-label 1024)
-                      :input-el "select"
-                      :attrs {:required true}
-                      :options (portion-labels)}
+            :part-of-meal {:label (get-label 1024)
+                           :input-el "select"
+                           :attrs {:required true}
+                           :options (part-of-meal-labels)}
             :ingredients {:label (get-label 1025)
                           :input-el "sub-form"
                           :sub-form-fieldset sub-form
                           :sub-form-fieldset-read read-form
-                          :sub-form-validation validate-form}}
+                          :sub-form-validation validate-form}
+            :diet {:label (get-label 1007)
+                   :input-el "radio"
+                   :attrs {:required true
+                           :disabled true}
+                   :options (diet-labels)}}
    :fields-order [:mname
-                  :portion
-                  :mtype
-                  :description
+                  :label-code
                   :calories-sum
                   :proteins-sum
                   :fats-sum
                   :carbonhydrates-sum
+                  :diet
+                  :mtype
+                  :part-of-meal
+                  :description
                   :ingredients
                   :image]})
 
@@ -616,6 +721,7 @@
   "Table columns for meal entity"
   []
   {:projection [:mname
+                :label-code
                 :calories-sum
                 :proteins-sum
                 :fats-sum
@@ -623,9 +729,21 @@
                 ;:description
                 ;:image
                 ;:mtype
-                ;:portion
+                ;:part-of-meal
                 ;:ingredients
                 ]
+   :display-fields [;:mname
+                    :label-code
+                    :calories-sum
+                    :proteins-sum
+                    :fats-sum
+                    :carbonhydrates-sum
+                    ;:description
+                    ;:image
+                    ;:mtype
+                    ;:part-of-meal
+                    ;:ingredients
+                    ]
    :style
     {:mname
       {:content (get-label 1010)
@@ -633,6 +751,12 @@
        :td {:style {:width "12%"
                     :text-align "left"}}
        }
+     :label-code
+      {:content (get-label 1010)
+       :th {:style {:width "22%"}}
+       :td {:style {:width "22%"
+                    :text-align "left"}}
+       :original-field :mname}
      :calories-sum
       {:content (get-label 1018)
        :th {:style {:width "12%"}}
@@ -677,14 +801,14 @@
        :labels (into
                  #{}
                  (mtype-labels))}
-     :portion
+     :part-of-meal
       {:content (get-label 1024)
        :th {:style {:width "12%"}}
        :td {:style {:width "12%"
                     :text-align "right"}}
        :labels (into
                  #{}
-                 (portion-labels))}
+                 (part-of-meal-labels))}
      :ingredients
       {:content (get-label 1025)
        :th {:style {:width "12%"}}

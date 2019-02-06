@@ -1,0 +1,96 @@
+.meal-recommendation .meal-recommendation-commands,
+.meal-recommendation .meal-recommendation-display {
+ max-width: 767px;
+}
+.meal-recommendation .meal-recommendation-commands {
+ width: calc(100% - 20px);
+}
+.meal-recommendation .meal-recommendation-display {
+ width: 100%;
+}
+.meal-recommendation input,
+.meal-recommendation select {
+ box-sizing: content-box;
+ width: 100%;
+ display: block;
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ color: #0088cc;
+ margin: 5px 0;
+ padding: 5px 8px;
+}
+.meal-recommendation-display table {
+ border-collapse: separate;
+ border-spacing: 0;
+ color: #4a4a4d;
+ width: 100%;
+ margin: 10px 0;
+}
+.meal-recommendation-display th,
+.meal-recommendation-display td {
+ max-width: 0;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ white-space: nowrap;
+ text-align: center;
+ vertical-align: middle;
+}
+.meal-recommendation-display thead {
+ background-color: #0088cc;
+ color: #fff;
+ font-size: 11px;
+ text-transform: uppercase;
+}
+.meal-recommendation-display thead tr:first-child th {
+ padding: 10px 5px;
+ font-weight: bolder;
+}
+.meal-recommendation-display thead tr:nth-child(2) th {
+ background-color: gray;
+}
+.meal-recommendation-display tbody tr:nth-child(even) {
+ background-color: #f0f0f2;
+}
+.meal-recommendation-display td {
+ padding: 2px 5px;
+}
+.meal-recommendation-display tr.meal-row td {
+ background-color: #0088cc;
+ border-bottom: 1px solid orange;
+ color: white;
+ font-weight: bolder;
+ cursor: pointer;
+}
+.meal-recommendation-display tr.ingredient-row {
+ display: none;
+}
+.meal-recommendation-display tr.ingredient-row td:first-child {
+ background-color: gray;
+ color: white;
+}
+.meal-recommendation-display tr.ingredient-row.expand {
+ display: table-row;
+}
+.meal-recommendation-display .no-results {
+ color: #0088cc;
+ font-size: 24px;
+ font-weight: bolder;
+ text-align: center;
+ border: 1px solid #0088cc;
+ border-radius: 5px;
+ padding: 10px;
+}
+.meal-recommendation label {
+ color: #0088cc;
+ cursor: pointer;
+ font-weight: bolder;
+}
+/* Computer screen */
+@media only screen
+and (min-width: 768px) {
+}
+/* Grand Neo */
+@media only screen
+and (max-width: 767px) {
+}
+

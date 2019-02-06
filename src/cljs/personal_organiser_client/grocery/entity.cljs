@@ -4,6 +4,7 @@
                                       td h1 label input]]
             [language-lib.core :refer [get-label]]
             [common-client.allowed-actions.controller :refer [allowed-actions]]
+            [personal-organiser-middle.grocery.entity :as pomge]
             [personal-organiser-middle.collection-names :refer [grocery-cname]]))
 
 (def entity-type
@@ -18,7 +19,7 @@
 ;   :fats 0.0
 ;   :carbonhydrates 0.0
 ;   :description ""
-;   :origin ""}))
+;   :diet ""}))
 
 ;(defn- vitmin-data
 ; ""
@@ -265,13 +266,38 @@
           (td)])]
       ))
 
-(defn origin-labels
-  "Returns origin property labels"
+(defn diet-labels
+  "Returns diet property labels"
   []
-  [[(get-label 1042)
-    "all"]
-   [(get-label 1043)
-    "vegetarian"]])
+  [[(get-label 1044)
+    pomge/diet-vegetarian]
+   [(get-label 1042)
+    pomge/diet-not-vegetarian]])
+
+(defn group-labels
+  "Returns group property labels"
+  []
+  [[(get-label 1053)
+    pomge/group-i
+    (get-label 1054)]
+   [(get-label 1055)
+    pomge/group-ii
+    (get-label 1056)]
+   [(get-label 1057)
+    pomge/group-iii
+    (get-label 1058)]
+   [(get-label 1059)
+    pomge/group-iv
+    (get-label 1060)]
+   [(get-label 1061)
+    pomge/group-v
+    (get-label 1062)]
+   [(get-label 1063)
+    pomge/group-vi
+    (get-label 1064)]
+   [(get-label 1065)
+    pomge/group-vii
+    (get-label 1066)]])
 
 (defn form-conf-fn
   "Form configuration for grocery entity"
@@ -284,6 +310,11 @@
                     :attrs {:placeholder (get-label 1010)
                             :title (get-label 1010)
                             :required true}}
+            :label-code {:label (get-label 24)
+                         :input-el "number"
+                         :attrs {:step "1"
+                                 :placeholder (get-label 24)
+                                 :title (get-label 24)}}
             :calories {:label (get-label 1011)
                        :input-el "number"
                        :attrs {:step "0.1"
@@ -313,21 +344,27 @@
                           :attrs {:placeholder (get-label 1015)
                                   :title (get-label 1015)
                                   :required true}}
-            :origin {:label (get-label 1016)
-                     :input-el "radio"
-                     :attrs {:required true}
-                     :options (origin-labels)}
+            :diet {:label (get-label 1007)
+                   :input-el "radio"
+                   :attrs {:required true}
+                   :options (diet-labels)}
+            :group {:label (get-label 1052)
+                    :input-el "select"
+                    :attrs {:required true}
+                    :options (group-labels)}
             ;:vitmin {:label "Vitamins and Minerals"
             ;         :field-type "popup"
             ;         :popup popup-form}
             }
    :fields-order [:gname
+                  :label-code
                   :calories
                   :proteins
                   :fats
                   :carbonhydrates
                   :description
-                  :origin
+                  :diet
+                  :group
                   ;:vitmin
                   ]})
 
@@ -335,19 +372,38 @@
   "Table columns for grocery entity"
   []
   {:projection [:gname
+                :label-code
                 :calories
                 :proteins
                 :fats
                 :carbonhydrates
                 ;:description
-                :origin
+                :diet
+                ;:group
                 ]
+   :display-fields [;:gname
+                    :label-code
+                    :calories
+                    :proteins
+                    :fats
+                    :carbonhydrates
+                    ;:description
+                    :diet
+                    ;:group
+                    ]
    :style
     {:gname
       {:content (get-label 1010)
        :th {:style {:width "22%"}}
        :td {:style {:width "22%"
-                    :text-align "left"}}}
+                    :text-align "left"}}
+       }
+     :label-code
+      {:content (get-label 1010)
+       :th {:style {:width "22%"}}
+       :td {:style {:width "22%"
+                    :text-align "left"}}
+       :original-field :gname}
      :calories
       {:content (get-label 1011)
        :th {:style {:width "6.5%"}}
@@ -378,13 +434,13 @@
        :td {:style {:width "15%"
                     :text-align "left"}}
        }
-     :origin
-      {:content (get-label 1016)
+     :diet
+      {:content (get-label 1007)
        :th {:style {:width "12%"}}
        :td {:style {:width "12%"}}
        :labels (into
                  #{}
-                 (origin-labels))}}
+                 (diet-labels))}}
     })
 
 (defn query-fn
@@ -409,7 +465,7 @@
    :actions [:details :edit :delete]
    :allowed-actions @allowed-actions
    :search-on true
-   :search-fields [:gname :description :origin]
+   :search-fields [:gname :description :diet]
    :render-in ".content"
    :table-class "entities"
    :table-fn gen-table})
