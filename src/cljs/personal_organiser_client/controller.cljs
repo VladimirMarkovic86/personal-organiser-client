@@ -37,7 +37,7 @@
                            (.indexOf
                              base-ws-uri
                              "herokuapp"))
-                      "wss://personal-organiser-server-clj.herokuapp.com"
+                      "wss://personal-organiser-server.herokuapp.com"
                       "wss://192.168.1.86:1601")]
     (reset!
       base-ws-url
