@@ -14,7 +14,7 @@
                  [org.clojars.vladimirmarkovic86/personal-organiser-middle "0.2.6"]
                  [org.clojars.vladimirmarkovic86/common-middle "0.2.5"]
                  [org.clojars.vladimirmarkovic86/common-client "0.3.24"]
-                 [org.clojars.vladimirmarkovic86/server-lib "0.3.24"]
+                 [org.clojars.vladimirmarkovic86/server-lib "0.3.25"]
                  [org.clojars.vladimirmarkovic86/validator-lib "0.1.18"]
                  ]
 
