@@ -827,7 +827,7 @@
    :qsort {:mname 1}
    :pagination true
    :current-page 0
-   :rows 10
+   :rows pomme/rows
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
@@ -838,6 +838,7 @@
    :form-conf (form-conf-fn)
    :actions [:details :edit :delete]
    :allowed-actions @allowed-actions
+   :reports-on true
    :search-on true
    :search-fields [:mname
                    :description
