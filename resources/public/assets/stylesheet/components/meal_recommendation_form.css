@@ -56,7 +56,7 @@
 }
 .meal-recommendation-display tr.meal-row td {
  background-color: #0088cc;
- border-bottom: 1px solid orange;
+ border-bottom: 1px solid gray;
  color: white;
  font-weight: bolder;
  cursor: pointer;
