@@ -453,13 +453,15 @@
    :qsort {:gname 1}
    :pagination true
    :current-page 0
-   :rows pomge/rows
+   :rows (pomge/calculate-rows)
    :collation {:locale "sr"}})
 
 (defn table-conf-fn
   "Table configuration for grocery entity"
   []
-  {:query (query-fn)
+  {:preferences pomge/preferences
+   :query-fn query-fn
+   :query (query-fn)
    :columns (columns-fn)
    :form-conf (form-conf-fn)
    :actions [:details :edit :delete]

@@ -22,13 +22,13 @@
                   {:label (get-label 4)
                    :id "organism-create-nav-id"
                    :evt-fn create-entity
-                   :evt-p (table-conf-fn)})
+                   :evt-p table-conf-fn})
                 (when (contains?
                         @allowed-actions
                         pomfns/organism-read)
                   {:label (get-label 5)
                    :id "organism-show-all-nav-id"
                    :evt-fn gen-table
-                   :evt-p (table-conf-fn)})]}
-   ))
+                   :evt-p table-conf-fn})]})
+ )
 
