@@ -13,7 +13,7 @@
                  [org.clojars.vladimirmarkovic86/language-lib "0.2.30"]
                  [org.clojars.vladimirmarkovic86/personal-organiser-middle "0.2.9"]
                  [org.clojars.vladimirmarkovic86/common-middle "0.2.8"]
-                 [org.clojars.vladimirmarkovic86/common-client "0.3.34"]
+                 [org.clojars.vladimirmarkovic86/common-client "0.3.35"]
                  [org.clojars.vladimirmarkovic86/server-lib "0.3.29"]
                  [org.clojars.vladimirmarkovic86/validator-lib "0.1.28"]
                  ]
